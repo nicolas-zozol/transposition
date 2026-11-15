@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Graphe en couches</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/bldemo/tokens.css">
+<link rel="stylesheet" href="ds/bldemo/components/bundle.css">
+<script src="ds/bldemo/components/bundle.js"></script>
+<script src="transposition-exemple.js"></script>
+<script src="transposition-volumes.js"></script>
+<script src="transposition.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div data-theme="{{theme}}" style="padding: {{marge}}; --mono: var(--tp-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace)">
+<div ref="{{refZone}}" style="overflow-x: auto; border: {{bordure}}; border-radius: var(--radius-xl); background: {{fond}}">
+<sc-if value="{{aGraphe}}" hint-placeholder-val="{{true}}">
+<div role="group" aria-label="Ordre d'extraction : une colonne par rang" style="position: relative; width: {{g.largeur}}px; height: {{g.hauteur}}px; color: var(--foreground); font-family: var(--font-sans)">
+<sc-for list="{{g.colonnes}}" as="c" hint-placeholder-count="4">
+<div style="position: absolute; top: 0; height: 36px; box-sizing: border-box; display: flex; align-items: baseline; gap: 8px; padding-top: 14px; white-space: nowrap; {{c.cadre}}"><span style="font: 600 13px/18px var(--font-sans); color: var(--foreground)">{{c.titre}}</span><span style="font: 400 12px/16px var(--font-sans); color: var(--muted-foreground)">{{c.sous}}</span></div>
+</sc-for>
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; pointer-events: none">{{dessin}}</div>
+<sc-if value="{{g.aSocle}}" hint-placeholder-val="{{true}}">
+<div style="position: absolute; box-sizing: border-box; display: flex; flex-direction: column; gap: 2px; padding: 12px; overflow: hidden; border: 1px dashed var(--input); border-radius: var(--radius-xl); background: var(--background); {{g.socle.cadre}}">
+<span style="display: inline-flex; align-items: center; gap: 6px; font: 600 14px/20px var(--font-display); color: var(--foreground)">{{icSocle}}<span>Socle</span></span>
+<span style="margin-bottom: 8px; font: 400 12px/16px var(--font-sans); color: var(--muted-foreground)">{{g.socle.compte}}</span>
+<sc-for list="{{g.socle.items}}" as="u"><span title="{{u.objet}}" style="display: flex; justify-content: space-between; gap: 8px; min-height: 24px; align-items: center; font: 400 12px/16px var(--mono); color: {{u.couleur}}; font-weight: {{u.poids}}"><span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{u.objet}}</span><span style="font-family: var(--font-sans); font-variant-numeric: tabular-nums">{{u.compte}}</span></span></sc-for>
+<sc-if value="{{g.socle.aReste}}"><span style="margin-top: 4px; font: 400 12px/16px var(--font-sans); color: var(--muted-foreground)">{{g.socle.reste}}</span></sc-if>
+</div>
+</sc-if>
+<sc-for list="{{g.noeuds}}" as="n" hint-placeholder-count="4">
+<button type="button" onClick="{{n.choisir}}" aria-pressed="{{n.selectionnee}}" style="all: unset; box-sizing: border-box; position: absolute; display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; overflow: hidden; border: 1px solid; border-radius: var(--radius-xl); background: var(--card); cursor: pointer; transition: border-color .15s, opacity .15s; {{n.cadre}}" style-hover="border-color: var(--ring)" style-focus-visible="box-shadow: var(--focus-ring)">
+<span style="display: flex; align-items: center; gap: 6px; min-height: 24px"><span style="font: 500 12px/16px var(--mono); color: var(--muted-foreground)">{{n.id}}</span><sc-if value="{{n.aSous}}"><span title="{{n.sousTitre}}" style="display: inline-flex; align-items: center; gap: 3px; height: 20px; padding: 0 6px; border-radius: var(--radius-full); background: var(--muted); color: var(--foreground); font: 500 12px/16px var(--font-sans)">{{icBranche}}<span>{{n.sous}}</span><span class="bl-sr">{{n.sousTitre}}</span></span></sc-if><span style="flex: 1 1 0"></span><sc-if value="{{n.extractible}}"><x-import component-from-global-scope="BLDemo.Badge" tone="info" icon="{{vrai}}">Extractible</x-import></sc-if><sc-if value="{{n.partielle}}"><x-import component-from-global-scope="BLDemo.Badge" tone="neutral" variant="outline" icon="circle-help">Partielle</x-import></sc-if></span>
+<span title="{{n.titre}}" style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: {{n.pince}}; overflow: hidden; font: 600 13px/18px var(--font-sans); color: var(--foreground)">{{n.titre}}</span>
+<span style="margin-top: auto; display: flex"><x-import component-from-global-scope="BLDemo.StatusDot" tone="{{n.extraction.ton}}" dc-props="{{propsRetour}}">{{n.extraction.texte}}</x-import></span>
+</button>
+</sc-for>
+<sc-for list="{{g.etiquettes}}" as="q"><span style="position: absolute; left: {{q.x}}px; top: {{q.y}}px; transform: translate(-50%, -50%); box-sizing: border-box; height: 18px; padding: 0 6px; border: 1px solid {{q.bordure}}; border-radius: var(--radius-full); background: var(--card); color: {{q.couleur}}; font: 500 11px/16px var(--mono); white-space: nowrap; pointer-events: none">{{q.texte}}</span></sc-for>
+</div>
+</sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"magasin":{"editor":null},"nu":{"editor":null},"fonctionnalite":{"editor":"text","default":"F07.1"},"jeu":{"editor":"enum","options":["exemple","depart","intermediaire"],"default":"exemple"},"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1200,"height":440}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var moi = this;
+    this.state = { largeur: 0 };
+    this.zone = null;
+    this.refZone = function (el) { moi.zone = el; };
+    this.lien = window.Transposition.attacher(this, 'graphe');
+    this.propsRetour = { style: { whiteSpace: 'normal', alignItems: 'baseline', textAlign: 'left' } };
+  }
+  mesurer() {
+    if (!this.zone) return;
+    var w = Math.floor(this.zone.clientWidth);
+    if (w > 0 && Math.abs(w - this.state.largeur) > 6) this.setState({ largeur: w });
+  }
+  componentDidMount() {
+    var moi = this;
+    this.lien.monter();
+    this.mesurer();
+    if (typeof ResizeObserver !== 'undefined' && this.zone) {
+      this.observateur = new ResizeObserver(function () { moi.mesurer(); });
+      this.observateur.observe(this.zone);
+    }
+  }
+  componentWillUnmount() {
+    this.lien.demonter();
+    if (this.observateur) this.observateur.disconnect();
+  }
+  renderVals() {
+    var T = window.Transposition;
+    var seul = !this.props.magasin;
+    var v = this.lien.vue({ largeur: this.state.largeur || 0, nu: !!this.props.nu });
+    v.refZone = this.refZone;
+    v.propsRetour = this.propsRetour;
+    v.vrai = true;
+    v.icSocle = T.icone('socle', 16);
+    v.icBranche = T.icone('branche', 12);
+    v.marge = seul ? 'var(--space-6)' : '0';
+    v.bordure = seul ? '1px solid var(--border)' : '0';
+    v.fond = seul ? 'var(--card)' : 'transparent';
+    v.theme = seul ? v.theme : undefined;
+    return v;
+  }
+}
+</script>
+</body>
+</html>

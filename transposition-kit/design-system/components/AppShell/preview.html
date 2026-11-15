@@ -1,0 +1,76 @@
+<!-- @dsCard group="Structure" height=720 width=1440 -->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>AppShell — preview</title>
+<style>body{padding:16px}.pv-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px}.pv-col{display:grid;gap:16px}.pv-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}html,body{height:100%}body{padding:0}#root{height:720px}</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+var B = window.BLDemo, h = React.createElement, useState = React.useState;
+function Preview() {
+  const [nav, setNav] = useState("supervision");
+  const [tab, setTab] = useState("tous");
+  const [page, setPage] = useState(1);
+  const rows = [
+    { id: "2620115", patient: "FAURE Inès", situation: ["destructive", "Droits AMO à vérifier"], adm: ["destructive", "Incoh."], pmsi: null, fact: null, facturier: null, sortie: null, action: null },
+    { id: "2620008", patient: "BERGER Adam", situation: ["warning", "CRH manquant"], adm: ["success", "OK"], pmsi: ["warning", "CRH"], fact: null, facturier: "Sophie LEROY", sortie: "20 j", action: "Relancer PMSI" },
+    { id: "2620029", patient: "TECHER Léa", situation: ["success", "Contrôles OK"], adm: ["success", "OK"], pmsi: ["success", "OK"], fact: ["info", "à calculer"], facturier: "Claire DUBOIS", sortie: "20 j", action: "Facturer" },
+    { id: "2612022", patient: "MULLER Hugo", situation: ["warning", "Réponse mutuelle attendue"], adm: ["success", "OK"], pmsi: ["success", "OK"], fact: null, facturier: "Nadia BENALI", sortie: "20 j", action: "Vérifier mutuelle" },
+    { id: "2620052", patient: "DE LATRE DE TASIGNY Emma", situation: ["info", "Contrôle ciblé requis"], adm: ["success", "OK"], pmsi: ["success", "OK"], fact: ["success", "calculée"], facturier: "Camille MARTIN", sortie: "16 j", action: "Éditer la facture" }
+  ];
+  const columns = [
+    { key: "id", header: "Dossier", sortable: true, muted: true, width: 110 },
+    { key: "patient", header: "Patient", sortable: true, strong: true },
+    { key: "situation", header: "Situation", render: (r) => r.situation && /* @__PURE__ */ h(B.Badge, { tone: r.situation[0], icon: true }, r.situation[1]) },
+    { key: "adm", header: "Adm", render: (r) => /* @__PURE__ */ h(B.StatusDot, { tone: r.adm ? r.adm[0] : "neutral" }, r.adm ? r.adm[1] : "—") },
+    { key: "pmsi", header: "PMSI", render: (r) => /* @__PURE__ */ h(B.StatusDot, { tone: r.pmsi ? r.pmsi[0] : "neutral" }, r.pmsi ? r.pmsi[1] : "—") },
+    { key: "fact", header: "Fact", render: (r) => /* @__PURE__ */ h(B.StatusDot, { tone: r.fact ? r.fact[0] : "neutral" }, r.fact ? r.fact[1] : "—") },
+    { key: "facturier", header: "Facturier", muted: true },
+    { key: "sortie", header: "Sortie", muted: true, align: "right" },
+    { key: "action", header: "", align: "right", render: (r) => r.action && /* @__PURE__ */ h(B.Button, { variant: "outline", size: "sm", iconRight: "chevron-right" }, r.action) }
+  ];
+  const shown = tab === "tous" ? rows : rows.filter((r) => tab === "traiter" ? r.situation && r.situation[0] !== "success" : r.fact && r.fact[1] === "à calculer");
+  return /* @__PURE__ */ h(
+    B.AppShell,
+    {
+      sidebar: /* @__PURE__ */ h(B.Sidebar, { title: "Facturation", items: [
+        { value: "accueil", label: "Accueil", icon: "house" },
+        { value: "dossiers", label: "Dossiers", icon: "folder-open", badge: 8 },
+        { value: "familles", label: "Familles", icon: "users" },
+        { value: "facturation", label: "Facturation", icon: "receipt", items: [
+          { value: "supervision", label: "Supervision" },
+          { value: "rejets", label: "Rejets" },
+          { value: "encaissement", label: "Encaissement" }
+        ] },
+        { value: "rapports", label: "Rapports", icon: "chart-column" },
+        { section: "Paramétrage" },
+        { value: "organisation", label: "Organisation", icon: "network" },
+        { value: "admin", label: "Administration", icon: "settings" }
+      ], value: nav, onValueChange: setNav }),
+      topbar: /* @__PURE__ */ h(B.Topbar, { title: "Supervision de la facturation", meta: /* @__PURE__ */ h(React.Fragment, null, "Date de traitement : ", /* @__PURE__ */ h("strong", null, "22/06/2026")) }, /* @__PURE__ */ h(B.Select, { pill: true, options: ["Clinique Saint-Martin", "Clinique des Cèdres"], "aria-label": "Établissement" }), /* @__PURE__ */ h(B.Button, { variant: "ghost", icon: "moon", "aria-label": "Thème sombre" }), /* @__PURE__ */ h(B.Avatar, { name: "Claire Leroy" }))
+    },
+    /* @__PURE__ */ h(B.Card, null, /* @__PURE__ */ h("div", { className: "pv-row", style: { gap: 32 } }, /* @__PURE__ */ h(B.Input, { icon: "search", placeholder: "Rechercher un dossier ou un patient…", style: { width: 320 } }), /* @__PURE__ */ h(B.Stat, { value: "40 700 €", label: "Mt GHS cumulé" }), /* @__PURE__ */ h(B.Stat, { value: "12,1 j", label: "Sortie depuis (moy.)" }), /* @__PURE__ */ h(B.Stat, { value: "8", label: "En retard (> 5 j)", tone: "warning" }))),
+    /* @__PURE__ */ h(B.Card, { flush: true, footer: /* @__PURE__ */ h(B.Pagination, { page, pageCount: 1, onPageChange: setPage, total: shown.length, pageSize: 25, style: { flex: 1 } }) }, /* @__PURE__ */ h("div", { style: { padding: "0 20px" } }, /* @__PURE__ */ h(
+      B.Tabs,
+      {
+        value: tab,
+        onValueChange: setTab,
+        items: [
+          { value: "traiter", label: "À traiter", count: 4 },
+          { value: "calculer", label: "À calculer", count: 1 },
+          { value: "valider", label: "À valider", disabled: true },
+          { value: "tous", label: "Tous les dossiers", count: 5 }
+        ]
+      }
+    )), /* @__PURE__ */ h(B.DataTable, { columns, rows: shown, selectable: true, empty: "Aucun dossier dans cette file. Changez d'onglet ou de filtre." }))
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(h(Preview));
+})();
+</script>
+</body>
+</html>

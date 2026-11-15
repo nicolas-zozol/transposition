@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Onglet Règles</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/bldemo/tokens.css">
+<link rel="stylesheet" href="ds/bldemo/components/bundle.css">
+<script src="ds/bldemo/components/bundle.js"></script>
+<script src="transposition-exemple.js"></script>
+<script src="transposition-volumes.js"></script>
+<script src="transposition.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div data-theme="{{theme}}" style="--mono: var(--tp-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace); display: flex; flex-direction: column; gap: var(--space-4); padding: {{marge}}; color: var(--foreground); font: 400 14px/20px var(--font-sans)">
+
+<h2 style="margin: 0; color: var(--foreground); font: 600 18px/26px var(--font-display); text-wrap: balance">Que fait cette fonctionnalité, est-ce prouvé, le métier est-il d'accord ?</h2>
+
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4)">
+
+<div style="flex: 1 1 320px; max-width: 380px; min-width: 300px; position: sticky; top: 0">
+<x-import component-from-global-scope="BLDemo.Card" flush="{{vrai}}">
+<div style="display: grid; gap: 4px; padding: 16px 16px 0">
+<x-import component-from-global-scope="BLDemo.Input" icon="search" value="{{rechercheFonc}}" on-change="{{surRechercheFonc}}" placeholder="Rechercher une fonctionnalité…" aria-label="Rechercher une fonctionnalité"></x-import>
+<x-import component-from-global-scope="BLDemo.Tabs" items="{{filtres}}" value="{{filtre}}" on-value-change="{{surFiltre}}" aria-label="Filtrer les fonctionnalités" dc-props="{{propsOnglets}}"></x-import>
+</div>
+<div style="max-height: calc(100vh - 300px); min-height: 160px; overflow-y: auto; border-radius: 0 0 var(--radius-xl) var(--radius-xl)">
+<sc-for list="{{liste}}" as="l" hint-placeholder-count="6">
+<button type="button" onClick="{{l.choisir}}" aria-current="{{l.selectionnee}}" style="all: unset; box-sizing: border-box; display: grid; gap: 6px; width: 100%; padding: 12px 16px 12px {{l.retrait}}; border-bottom: 1px solid var(--border); background: {{l.fond}}; opacity: {{l.opacite}}; cursor: pointer" style-hover="background: color-mix(in oklab, var(--muted) 70%, transparent)" style-focus-visible="box-shadow: inset 0 0 0 2px var(--ring)">
+<span style="display: flex; align-items: baseline; gap: 8px"><span style="flex: none; color: var(--muted-foreground); font: 500 12px/16px var(--mono)">{{l.id}}</span><span style="color: var(--foreground); font: 600 14px/20px var(--font-sans); text-wrap: pretty">{{l.titre}}</span></span>
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px">
+<x-import component-from-global-scope="BLDemo.StatusDot" tone="{{l.extraction.ton}}">{{l.extraction.texte}}</x-import>
+<span style="color: var(--muted-foreground); font: 400 13px/18px var(--font-sans)">{{l.reglesTexte}}</span>
+<sc-if value="{{l.aVerdict}}"><x-import component-from-global-scope="BLDemo.Badge" tone="{{l.verdict.ton}}" icon="{{l.verdict.icone}}">{{l.verdict.texte}}</x-import></sc-if>
+</span>
+</button>
+</sc-for>
+<sc-if value="{{listeVide}}">
+<p style="margin: 0; padding: 24px 16px; color: var(--muted-foreground); text-align: center">Aucune fonctionnalité ne correspond. Changez de filtre ou de recherche.</p>
+</sc-if>
+<sc-if value="{{aOrphelines}}">
+<p style="margin: 0; padding: 12px 16px; color: var(--muted-foreground); font: 400 13px/18px var(--font-sans)">{{orphelinesTexte}}</p>
+</sc-if>
+</div>
+</x-import>
+</div>
+
+<sc-if value="{{aFiche}}" hint-placeholder-val="{{true}}">
+<div style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-4)">
+
+<x-import component-from-global-scope="BLDemo.Card">
+<div style="display: flex; flex-direction: column; gap: var(--space-4)">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px 16px">
+<div style="flex: 1 1 320px; min-width: 0; display: grid; gap: 6px">
+<span style="color: var(--muted-foreground); font: 500 12px/16px var(--mono)">{{fiche.id}}</span>
+<h3 style="margin: 0; color: var(--foreground); font: 600 18px/26px var(--font-display); text-wrap: balance">{{fiche.titre}}</h3>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; color: var(--muted-foreground); font: 400 13px/18px var(--font-sans)">
+<span>{{fiche.page}}</span>
+<sc-if value="{{fiche.aMere}}"><span>Sous-fonctionnalité de</span><x-import component-from-global-scope="BLDemo.Button" variant="link" on-click="{{fiche.ouvrirMere}}">{{fiche.mereTexte}}</x-import></sc-if>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px; padding-top: 2px">
+<sc-for list="{{fiche.badges}}" as="q"><x-import component-from-global-scope="BLDemo.Badge" tone="{{q.ton}}" icon="{{q.icone}}" variant="{{q.variante}}">{{q.texte}}</x-import></sc-for>
+</div>
+</div>
+<x-import component-from-global-scope="BLDemo.Tabs" variant="segmented" items="{{fiche.modeItems}}" value="{{fiche.mode}}" on-value-change="{{fiche.surMode}}" aria-label="Lecture des exemples"></x-import>
+</div>
+
+<sc-if value="{{fiche.aAlerte}}">
+<div role="status" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 16px; border-radius: var(--radius-md); background: var(--warning-soft); color: var(--warning); font: 500 14px/20px var(--font-sans)">
+<x-import component-from-global-scope="BLDemo.Icon" name="triangle-alert" size="{{16}}"></x-import>
+<span style="flex: 1 1 240px; color: var(--foreground); font-weight: 400">{{fiche.alerte}}</span>
+<x-import component-from-global-scope="BLDemo.Button" variant="outline" size="sm" icon-right="chevron-right" on-click="{{fiche.allerDependances}}">Voir dans Dépendances</x-import>
+</div>
+</sc-if>
+
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4) var(--space-10); padding-top: var(--space-4); border-top: 1px solid var(--border)">
+<x-import component-from-global-scope="BLDemo.Stat" layout="stacked" value="{{fiche.statRegles}}" label="{{fiche.libRegles}}"></x-import>
+<x-import component-from-global-scope="BLDemo.Stat" layout="stacked" value="{{fiche.statUnitaires}}" label="{{fiche.libUnitaires}}"></x-import>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 4px 16px">
+<x-import component-from-global-scope="BLDemo.Stat" layout="stacked" value="{{fiche.statIntegration}}" label="{{fiche.libIntegration}}"></x-import>
+<sc-if value="{{fiche.aIntegration}}">
+<div style="display: flex; flex-wrap: wrap; gap: 2px 12px; max-width: 260px; padding-bottom: 5px">
+<sc-for list="{{fiche.integration}}" as="i"><x-import component-from-global-scope="BLDemo.StatusDot" tone="{{i.ton}}">{{i.texte}}</x-import></sc-for>
+</div>
+</sc-if>
+</div>
+<span style="flex: 1 1 0"></span>
+<div style="display: grid; gap: 4px">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4) var(--space-6)">
+<x-import component-from-global-scope="BLDemo.Stat" layout="stacked" value="{{fiche.depDe}}" label="Dépend de"></x-import>
+<x-import component-from-global-scope="BLDemo.Stat" layout="stacked" value="{{fiche.depPar}}" label="Requise par"></x-import>
+<x-import component-from-global-scope="BLDemo.Stat" layout="stacked" value="{{fiche.depManquantes}}" label="Manquantes" tone="{{fiche.tonManquantes}}"></x-import>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; color: var(--muted-foreground); font: 400 13px/18px var(--font-sans)">
+<sc-if value="{{fiche.aDepNote}}"><span>{{fiche.depNote}}</span></sc-if>
+<x-import component-from-global-scope="BLDemo.Button" variant="link" icon-right="arrow-right" on-click="{{fiche.allerDependances}}">Voir les dépendances</x-import>
+</div>
+</div>
+</div>
+</div>
+</x-import>
+
+<sc-if value="{{fiche.aRegles}}" hint-placeholder-val="{{true}}">
+<div style="display: grid; gap: 4px; padding: var(--space-2) 0 0">
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 16px">
+<h3 style="margin: 0; color: var(--foreground); font: 600 15px/22px var(--font-display)">Règles métier</h3>
+<sc-if value="{{fiche.aDecoupage}}"><span style="color: var(--muted-foreground); font: 400 13px/18px var(--font-sans)">{{fiche.decoupage}}</span></sc-if>
+</div>
+<x-import component-from-global-scope="BLDemo.Tabs" items="{{fiche.filtresRegles}}" value="{{fiche.filtreRegles}}" on-value-change="{{fiche.surFiltreRegles}}" aria-label="Filtrer les règles par avis"></x-import>
+</div>
+
+<sc-for list="{{fiche.regles}}" as="r" hint-placeholder-count="3">
+<x-import component-from-global-scope="BLDemo.Card">
+<div style="display: flex; flex-direction: column; gap: var(--space-4)">
+
+<div style="display: flex; align-items: flex-start; gap: 16px">
+<div style="flex: 1 1 0; min-width: 0; display: grid; gap: 4px">
+<span style="color: var(--muted-foreground); font: 500 12px/16px var(--mono)">{{r.id}}</span>
+<h4 style="margin: 0; color: var(--foreground); font: 600 15px/22px var(--font-display); text-wrap: pretty">{{r.enonce}}</h4>
+</div>
+<x-import component-from-global-scope="BLDemo.Badge" tone="{{r.verdict.ton}}" icon="{{r.verdict.icone}}">{{r.verdict.texte}}</x-import>
+</div>
+
+<div style="display: grid; gap: 10px; padding-top: var(--space-4); border-top: 1px solid var(--border)">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+<span style="font: 600 13px/18px var(--font-sans)">Avis du métier</span>
+<x-import component-from-global-scope="BLDemo.Badge" tone="{{r.avis.ton}}" icon="{{r.avis.icone}}">{{r.avis.texte}}</x-import>
+<sc-if value="{{r.signature}}"><span style="color: var(--muted-foreground); font: 400 12px/16px var(--font-sans)">{{r.signature}}</span></sc-if>
+<span style="flex: 1 1 0"></span>
+<div role="group" aria-label="Votre avis" style="display: flex; gap: 8px">
+<x-import component-from-global-scope="BLDemo.Button" size="sm" variant="{{r.varValidee}}" icon="{{r.iconeValidee}}" aria-pressed="{{r.presseValidee}}" on-click="{{r.choisirValidee}}">Validée</x-import>
+<x-import component-from-global-scope="BLDemo.Button" size="sm" variant="{{r.varARevoir}}" icon="{{r.iconeARevoir}}" aria-pressed="{{r.presseARevoir}}" on-click="{{r.choisirARevoir}}">À revoir</x-import>
+</div>
+</div>
+<sc-if value="{{r.proposerCommentaire}}">
+<div style="display: flex"><x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" icon="message-circle" on-click="{{r.ouvrirCommentaire}}" dc-props="{{propsRentre}}">Ajouter un commentaire</x-import></div>
+</sc-if>
+<sc-if value="{{r.champCommentaire}}">
+<div style="display: grid; gap: 6px">
+<label for="{{r.idCommentaire}}" class="bl-label">Commentaire</label>
+<textarea id="{{r.idCommentaire}}" class="bl-input" rows="2" value="{{r.commentaire}}" onChange="{{r.surCommentaire}}" placeholder="Ce qui manque, ce qui a changé, ce qu'il faut vérifier…" style="height: auto; min-height: 60px; padding: 8px 12px; resize: vertical"></textarea>
+<span class="bl-field-note">{{r.aideCommentaire}}</span>
+</div>
+</sc-if>
+</div>
+
+<div style="display: grid; gap: 12px; padding-top: var(--space-3); border-top: 1px solid var(--border)">
+<button type="button" onClick="{{r.basculerExemples}}" aria-expanded="{{r.exemplesOuverts}}" style="all: unset; box-sizing: border-box; display: inline-flex; align-items: center; gap: 6px; width: fit-content; height: 28px; margin-left: -6px; padding: 0 10px 0 6px; border-radius: var(--radius-full); color: var(--foreground); font: 600 13px/18px var(--font-sans); cursor: pointer" style-hover="background: var(--accent)" style-focus-visible="box-shadow: var(--focus-ring)"><x-import component-from-global-scope="BLDemo.Icon" name="{{r.chevronExemples}}" size="{{16}}"></x-import><span>{{r.nbExemples}}</span></button>
+<sc-if value="{{r.exemplesOuverts}}">
+<sc-for list="{{r.exemples}}" as="x">
+<div style="display: grid; gap: 8px; padding-left: 22px">
+<div style="display: flex; align-items: center; gap: 12px"><span style="flex: 1 1 0; min-width: 0; font: 600 14px/20px var(--font-sans)">{{x.titre}}</span><x-import component-from-global-scope="BLDemo.Badge" tone="{{x.verdict.ton}}" icon="{{x.verdict.icone}}">{{x.verdict.texte}}</x-import></div>
+<sc-if value="{{fiche.enFrancais}}"><p style="margin: 0; max-width: 76ch; text-wrap: pretty">{{x.francais}}</p></sc-if>
+<sc-if value="{{fiche.enGherkin}}"><dc-import name="BlocGherkin" texte="{{x.gherkin}}" hint-size="100%,140px"></dc-import></sc-if>
+<sc-if value="{{x.aExplication}}">
+<div style="display: flex; align-items: flex-start; gap: 8px; padding: 8px 12px; border-radius: var(--radius-md); background: {{x.fondExplication}}; color: {{x.couleurExplication}}; font: 400 13px/18px var(--font-sans)"><span style="flex: none; display: inline-flex; padding-top: 2px"><x-import component-from-global-scope="BLDemo.Icon" name="{{x.iconeExplication}}" size="{{14}}"></x-import></span><span style="color: var(--foreground)">{{x.explication}}</span></div>
+</sc-if>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px">
+<span style="color: var(--muted-foreground); font: 500 12px/16px var(--font-sans)">Prouvé par</span>
+<sc-for list="{{x.tests}}" as="t"><span style="display: inline-flex; align-items: center; gap: 8px; height: 24px; padding: 0 8px; border: 1px solid var(--border); border-radius: var(--radius-md)"><span style="font: 400 12px/16px var(--mono)">{{t.id}}</span><x-import component-from-global-scope="BLDemo.StatusDot" tone="{{t.ton}}">{{t.texte}}</x-import></span></sc-for>
+<sc-if value="{{x.sansTests}}"><span style="color: var(--muted-foreground); font: 400 13px/18px var(--font-sans)">aucun test</span></sc-if>
+</div>
+</div>
+</sc-for>
+</sc-if>
+</div>
+
+<sc-if value="{{r.aCode}}">
+<div style="display: grid; gap: 8px; padding-top: var(--space-3); border-top: 1px solid var(--border)">
+<button type="button" onClick="{{r.basculerCode}}" aria-expanded="{{r.codeOuvert}}" style="all: unset; box-sizing: border-box; display: inline-flex; align-items: center; gap: 6px; width: fit-content; height: 28px; margin-left: -6px; padding: 0 10px 0 6px; border-radius: var(--radius-full); color: var(--foreground); font: 600 13px/18px var(--font-sans); cursor: pointer" style-hover="background: var(--accent)" style-focus-visible="box-shadow: var(--focus-ring)"><x-import component-from-global-scope="BLDemo.Icon" name="{{r.chevronCode}}" size="{{16}}"></x-import><span>{{r.nbCode}}</span></button>
+<sc-if value="{{r.codeOuvert}}">
+<sc-for list="{{r.code}}" as="c">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding-left: 22px">
+<span style="padding: 0 6px; border-radius: var(--radius-sm); background: var(--muted); font: 400 12px/20px var(--mono)">{{c.regle}}</span>
+<span style="min-width: 0; overflow-wrap: anywhere; color: var(--muted-foreground); font: 400 13px/18px var(--mono)"><span>{{c.prefixe}}</span><span style="color: var(--foreground); font-weight: 600">{{c.nom}}</span></span>
+<span style="color: var(--muted-foreground); font: 400 13px/18px var(--font-sans); font-variant-numeric: tabular-nums">{{c.lignes}}</span>
+<span style="flex: 1 1 0"></span>
+<x-import component-from-global-scope="BLDemo.Button" variant="outline" size="sm" icon-right="chevron-right" on-click="{{c.voir}}">Voir dans Repérage</x-import>
+</div>
+</sc-for>
+</sc-if>
+</div>
+</sc-if>
+
+</div>
+</x-import>
+</sc-for>
+
+<sc-if value="{{fiche.aucuneDansFiltre}}">
+<x-import component-from-global-scope="BLDemo.Card">
+<p style="margin: 0; padding: var(--space-4) 0; color: var(--muted-foreground); text-align: center">Aucune règle dans cette file. Choisissez « Toutes » pour les relire.</p>
+</x-import>
+</sc-if>
+</sc-if>
+
+<sc-if value="{{fiche.sansRegles}}">
+<x-import component-from-global-scope="BLDemo.Card">
+<div style="display: grid; justify-items: start; gap: 12px; padding: var(--space-5) 0">
+<span style="display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--muted); color: var(--muted-foreground)"><x-import component-from-global-scope="BLDemo.Icon" name="list-checks" size="{{20}}"></x-import></span>
+<h3 style="margin: 0; color: var(--foreground); font: 600 18px/26px var(--font-display)">{{fiche.vide.titre}}</h3>
+<p style="margin: 0; max-width: 64ch; text-wrap: pretty">{{fiche.vide.texte}}</p>
+<sc-if value="{{fiche.vide.aSous}}">
+<div style="display: grid; gap: 8px; width: 100%; max-width: 720px">
+<sc-for list="{{fiche.vide.sous}}" as="s">
+<button type="button" onClick="{{s.ouvrir}}" style="all: unset; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; width: 100%; min-height: 48px; padding: 8px 12px 8px 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); cursor: pointer" style-hover="background: var(--accent)" style-focus-visible="box-shadow: var(--focus-ring)">
+<span style="color: var(--muted-foreground); font: 500 12px/16px var(--mono)">{{s.id}}</span>
+<span style="flex: 1 1 200px; font: 600 14px/20px var(--font-sans)">{{s.titre}}</span>
+<x-import component-from-global-scope="BLDemo.StatusDot" tone="{{s.extraction.ton}}">{{s.extraction.texte}}</x-import>
+<span style="color: var(--muted-foreground); font: 400 13px/18px var(--font-sans)">{{s.detail}}</span>
+<span style="display: inline-flex; color: var(--muted-foreground)"><x-import component-from-global-scope="BLDemo.Icon" name="chevron-right" size="{{16}}"></x-import></span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; padding-top: 4px">
+<x-import component-from-global-scope="BLDemo.Button" variant="outline" icon-right="chevron-right" on-click="{{fiche.vide.allerReperage}}">Voir son arbre dans Repérage</x-import>
+<x-import component-from-global-scope="BLDemo.Button" variant="outline" icon-right="chevron-right" on-click="{{fiche.vide.allerDependances}}">Voir dans Dépendances</x-import>
+</div>
+</div>
+</x-import>
+</sc-if>
+
+<sc-if value="{{fiche.aQuestions}}">
+<x-import component-from-global-scope="BLDemo.Card" title="{{fiche.titreQuestions}}">
+<div style="display: grid; gap: var(--space-5)">
+<sc-for list="{{fiche.questions}}" as="q">
+<div style="display: grid; gap: 8px">
+<div style="display: flex; align-items: flex-start; gap: 12px"><p style="flex: 1 1 0; margin: 0; font: 600 14px/20px var(--font-sans); text-wrap: pretty">{{q.texte}}</p><x-import component-from-global-scope="BLDemo.Badge" tone="{{q.etat.ton}}" icon="{{q.etat.icone}}">{{q.etat.texte}}</x-import></div>
+<sc-if value="{{q.aRegles}}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px"><span style="color: var(--muted-foreground); font: 500 12px/16px var(--font-sans)">Règles concernées</span><sc-for list="{{q.regles}}" as="idr"><span style="padding: 0 6px; border-radius: var(--radius-sm); background: var(--muted); font: 400 12px/20px var(--mono)">{{idr}}</span></sc-for></div>
+</sc-if>
+<label for="{{q.idChamp}}" class="bl-label">Réponse</label>
+<textarea id="{{q.idChamp}}" class="bl-input" rows="2" value="{{q.reponse}}" onChange="{{q.surReponse}}" placeholder="Votre réponse…" style="height: auto; min-height: 60px; padding: 8px 12px; resize: vertical"></textarea>
+<sc-if value="{{q.aSignature}}"><span class="bl-field-note">{{q.signature}}</span></sc-if>
+</div>
+</sc-for>
+</div>
+</x-import>
+</sc-if>
+
+<sc-if value="{{fiche.aTests}}">
+<x-import component-from-global-scope="BLDemo.Card" title="{{fiche.titreTests}}" collapsible="{{vrai}}" default-open="{{faux}}">
+<div style="margin: 0 calc(-1 * var(--space-5)) calc(-1 * var(--space-5)); border-top: 1px solid var(--border)">
+<x-import component-from-global-scope="BLDemo.DataTable" dense="{{vrai}}" columns="{{fiche.colonnesTests}}" rows="{{fiche.lignesTests}}" caption="Tests de la fonctionnalité"></x-import>
+</div>
+</x-import>
+</sc-if>
+
+</div>
+</sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"magasin":{"editor":null},"fonctionnalite":{"editor":"text","default":"F07.1.a"},"mode":{"editor":"enum","options":["francais","gherkin"],"default":"francais"},"jeu":{"editor":"enum","options":["exemple","depart","intermediaire"],"default":"exemple"},"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1152,"height":2480}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.lien = window.Transposition.attacher(this, 'regles');
+    this.propsOnglets = { style: { gap: 'var(--space-5)' } };
+    this.propsRentre = { style: { marginLeft: -12 } };
+  }
+  componentDidMount() { this.lien.monter(); }
+  componentWillUnmount() { this.lien.demonter(); }
+  renderVals() {
+    var v = this.lien.vue();
+    v.vrai = true;
+    v.faux = false;
+    v.propsOnglets = this.propsOnglets;
+    v.propsRentre = this.propsRentre;
+    return v;
+  }
+}
+</script>
+</body>
+</html>

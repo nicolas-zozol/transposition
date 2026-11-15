@@ -1,0 +1,140 @@
+/* BL Demo — compilé depuis tokens.json pour ce canevas : le système ne sert pas de tokens.css. */
+
+:root, [data-theme="light"] {
+  --background: #f7f5ff;
+  --foreground: #16142b;
+  --card: #ffffff;
+  --card-foreground: var(--foreground);
+  --popover: #ffffff;
+  --popover-foreground: var(--foreground);
+  --primary: #382e95;
+  --primary-foreground: #ffffff;
+  --secondary: #ebeafc;
+  --secondary-foreground: #382e95;
+  --muted: #efedf8;
+  --muted-foreground: #625f7d;
+  --accent: #ebeafc;
+  --accent-foreground: #16142b;
+  --destructive: #be123c;
+  --destructive-foreground: #ffffff;
+  --destructive-soft: #fff1f2;
+  --success: #15803d;
+  --success-soft: #f0fdf4;
+  --warning: #b45309;
+  --warning-soft: #fffbeb;
+  --info: #2563eb;
+  --info-soft: #eff6ff;
+  --border: #e4e1f2;
+  --input: #8683a6;
+  --ring: #5f58ba;
+  --overlay: #16142b80;
+  --chart-1: #feb265;
+  --chart-2: #ffd878;
+  --chart-3: #5fb5ee;
+  --chart-4: #70cdcd;
+  --chart-5: #5f58ba;
+  --memo-lime: #e7f3b8;
+  --memo-yellow: #fff4c6;
+  --memo-orange: #ffdcaa;
+  --memo-sky: #d2eef9;
+  --sidebar: #382e95;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ffffff;
+  --sidebar-primary-foreground: #382e95;
+  --sidebar-accent: #5452bc;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #5048a2;
+  --sidebar-ring: #ffffff;
+  --shadow-xs: 0 1px 2px #382e9512;
+  --shadow-sm: 0 1px 3px #382e9514, 0 6px 16px -4px #382e951f;
+  --shadow-md: 0 4px 8px -2px #16142b1f, 0 16px 32px -4px #16142b2e;
+  --focus-ring: 0 0 0 2px #ffffff, 0 0 0 4px #5f58ba;
+  --focus-ring-sidebar: 0 0 0 2px #382e95, 0 0 0 4px #ffffff;
+}
+
+[data-theme="dark"] {
+  --background: #110f24;
+  --foreground: #f3f1ff;
+  --card: #1a1833;
+  --card-foreground: var(--foreground);
+  --popover: #201e3d;
+  --popover-foreground: var(--foreground);
+  --primary: #a8a3f2;
+  --primary-foreground: #16142b;
+  --secondary: #2b2856;
+  --secondary-foreground: #dedbff;
+  --muted: #232140;
+  --muted-foreground: #a7a4c2;
+  --accent: #2b2856;
+  --accent-foreground: #f3f1ff;
+  --destructive: #fb7185;
+  --destructive-foreground: #16142b;
+  --destructive-soft: #45101f;
+  --success: #4ade80;
+  --success-soft: #0d2b1a;
+  --warning: #fbbf24;
+  --warning-soft: #3a2706;
+  --info: #60a5fa;
+  --info-soft: #13264d;
+  --border: #302d52;
+  --input: #7673a0;
+  --ring: #a8a3f2;
+  --overlay: #00000099;
+  --chart-5: #8f89e0;
+  --memo-lime: #323d18;
+  --memo-yellow: #453a12;
+  --memo-orange: #4a3115;
+  --memo-sky: #173b4a;
+  --sidebar: #2d2580;
+  --sidebar-accent: #4540a3;
+  --sidebar-border: #3f3893;
+  --shadow-xs: 0 1px 2px #00000066;
+  --shadow-sm: 0 1px 3px #00000080, 0 6px 16px -4px #00000099;
+  --shadow-md: 0 4px 8px -2px #000000a6, 0 16px 32px -4px #000000cc;
+  --focus-ring: 0 0 0 2px #110f24, 0 0 0 4px #a8a3f2;
+  --focus-ring-sidebar: 0 0 0 2px #2d2580, 0 0 0 4px #ffffff;
+}
+
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-4xl: 26px;
+  --radius-full: 9999px;
+  --control-sm: 32px;
+  --control-md: 36px;
+  --control-lg: 40px;
+  --row-height: 48px;
+  --sidebar-width: 240px;
+  --sidebar-rail: 56px;
+  --topbar-height: 64px;
+  --font-display: Poppins, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.display { font-family: var(--font-display); font-size: 32px; line-height: 40px; font-weight: 700; letter-spacing: -0.01em; }
+.h1 { font-family: var(--font-display); font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em; }
+.h2 { font-family: var(--font-display); font-size: 18px; line-height: 26px; font-weight: 600; }
+.h3 { font-family: var(--font-display); font-size: 15px; line-height: 22px; font-weight: 600; }
+.nav { font-family: var(--font-display); font-size: 14px; line-height: 20px; font-weight: 500; }
+.body { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 400; }
+.body-strong { font-family: var(--font-sans); font-size: 14px; line-height: 20px; font-weight: 600; }
+.small { font-family: var(--font-sans); font-size: 13px; line-height: 18px; font-weight: 400; }
+.label { font-family: var(--font-sans); font-size: 13px; line-height: 18px; font-weight: 500; }
+.caption { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 500; }
+.kpi { font-family: var(--font-sans); font-size: 20px; line-height: 28px; font-weight: 700; letter-spacing: -0.01em; }
+
+@font-face { font-family: "Poppins"; src: url("fonts/Poppins-latin-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Poppins"; src: url("fonts/Poppins-latin-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Poppins"; src: url("fonts/Poppins-latin-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("fonts/Inter-latin-variable.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }

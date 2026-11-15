@@ -1,0 +1,31 @@
+<!-- @dsCard group="Superpositions" height=340 -->
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Dialog — preview</title>
+<style>body{padding:16px}.pv-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px}.pv-col{display:grid;gap:16px}.pv-grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}body{padding:0}</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+var B = window.BLDemo, h = React.createElement, useState = React.useState;
+function Preview() {
+  const [open, setOpen] = useState(true);
+  return /* @__PURE__ */ h("div", { style: { padding: 16 } }, /* @__PURE__ */ h(B.Button, { onClick: () => setOpen(true), icon: "send" }, "Transmettre"), /* @__PURE__ */ h(
+    B.Dialog,
+    {
+      open,
+      onOpenChange: setOpen,
+      title: "Transmettre 4 factures ?",
+      description: "Les factures sélectionnées partent en télétransmission. Elles ne seront plus modifiables.",
+      footer: /* @__PURE__ */ h(React.Fragment, null, /* @__PURE__ */ h(B.Button, { variant: "outline", onClick: () => setOpen(false) }, "Annuler"), /* @__PURE__ */ h(B.Button, { icon: "send", onClick: () => setOpen(false) }, "Transmettre"))
+    }
+  ));
+}
+ReactDOM.createRoot(document.getElementById('root')).render(h(Preview));
+})();
+</script>
+</body>
+</html>

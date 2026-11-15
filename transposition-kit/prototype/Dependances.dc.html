@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Onglet Dépendances</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/bldemo/tokens.css">
+<link rel="stylesheet" href="ds/bldemo/components/bundle.css">
+<script src="ds/bldemo/components/bundle.js"></script>
+<script src="transposition-exemple.js"></script>
+<script src="transposition-volumes.js"></script>
+<script src="transposition.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div data-theme="{{theme}}" style="--mono: var(--tp-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace); display: flex; flex-direction: column; gap: var(--space-4); padding: {{marge}}; color: var(--foreground); font: 400 14px/20px var(--font-sans)">
+
+<h2 style="margin: 0; color: var(--foreground); font: 600 18px/26px var(--font-display); text-wrap: balance">Dans quel ordre extraire, et qu'est-ce qui bloque ?</h2>
+
+<x-import component-from-global-scope="BLDemo.Card">
+<div style="display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-10)">
+<sc-for list="{{stats}}" as="s" hint-placeholder-count="5"><x-import component-from-global-scope="BLDemo.Stat" layout="stacked" value="{{s.valeur}}" label="{{s.libelle}}" tone="{{s.ton}}"></x-import></sc-for>
+</div>
+</x-import>
+
+<sc-for list="{{alertes}}" as="a">
+<div role="status" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 20px; border: 1px solid color-mix(in oklab, var(--warning) 30%, transparent); border-radius: var(--radius-xl); background: var(--warning-soft); color: var(--warning)">
+<x-import component-from-global-scope="BLDemo.Icon" name="triangle-alert" size="{{16}}"></x-import>
+<span style="color: var(--foreground)"><strong style="font-weight: 600">{{a.id}} {{a.titre}}</strong> est extraite sans ses dépendances. Il manque :</span>
+<sc-for list="{{a.manquantes}}" as="x"><x-import component-from-global-scope="BLDemo.Button" variant="outline" size="sm" icon-right="chevron-right" on-click="{{x.ouvrir}}">{{x.id}} {{x.titre}}</x-import></sc-for>
+</div>
+</sc-for>
+
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4)">
+
+<div style="flex: 999 1 {{baseGraphe}}; min-width: 0">
+<x-import component-from-global-scope="BLDemo.Card" flush="{{vrai}}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; min-height: 30px; padding: 14px 20px; border-bottom: 1px solid var(--border)">
+<div style="flex: 1 1 320px; min-width: 0; display: grid; gap: 2px">
+<h3 style="margin: 0; color: var(--foreground); font: 600 15px/22px var(--font-display)">Ordre d'extraction</h3>
+<sc-if value="{{aGraphe}}" hint-placeholder-val="{{true}}"><p style="margin: 0; color: var(--muted-foreground); font: 400 13px/18px var(--font-sans)">Une colonne par rang. Une flèche va d'une fonctionnalité à celle dont elle dépend, et nomme l'objet qui porte la dépendance.</p></sc-if>
+</div>
+<sc-if value="{{aGraphe}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-wrap: wrap; gap: 4px 20px; color: var(--muted-foreground); font: 400 12px/16px var(--font-sans)">
+<span style="display: inline-flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 28px; border-top: 2px solid var(--muted-foreground)"></span>Dépendance validée</span>
+<span style="display: inline-flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 28px; border-top: 2px dashed var(--muted-foreground)"></span>Dépendance proposée</span>
+</div>
+</sc-if>
+</div>
+<sc-if value="{{aGraphe}}" hint-placeholder-val="{{true}}">
+<dc-import name="GrapheCouches" magasin="{{magasin}}" hint-size="100%,380px"></dc-import>
+</sc-if>
+<sc-if value="{{sansGraphe}}">
+<div style="display: grid; justify-items: start; gap: 12px; max-width: 760px; padding: var(--space-8) var(--space-5) var(--space-10)">
+<span style="display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--muted); color: var(--muted-foreground)"><x-import component-from-global-scope="BLDemo.Icon" name="link" size="{{20}}"></x-import></span>
+<h3 style="margin: 0; color: var(--foreground); font: 600 18px/26px var(--font-display)">{{videTitre}}</h3>
+<p style="margin: 0; text-wrap: pretty">{{videTexte}}</p>
+<sc-if value="{{videManque}}"><p style="margin: 0; font-weight: 600; text-wrap: pretty">{{videManque}}</p></sc-if>
+<sc-if value="{{videAretes}}"><p style="margin: 0; color: var(--muted-foreground); text-wrap: pretty">{{videAretes}}</p></sc-if>
+</div>
+</sc-if>
+</x-import>
+</div>
+
+<sc-if value="{{aSelection}}" hint-placeholder-val="{{true}}">
+<div style="flex: 1 1 320px; min-width: 300px">
+<x-import component-from-global-scope="BLDemo.Card">
+<div style="display: flex; flex-direction: column; gap: var(--space-4)">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px 16px">
+<div style="flex: 1 1 300px; min-width: 0; display: grid; gap: 6px">
+<span style="color: var(--muted-foreground); font: 500 12px/16px var(--mono)">{{panneau.id}}</span>
+<h3 style="margin: 0; color: var(--foreground); font: 600 15px/22px var(--font-display); text-wrap: balance">{{panneau.titre}}</h3>
+<div style="display: flex; flex-wrap: wrap; gap: 6px; padding-top: 2px">
+<sc-for list="{{panneau.badges}}" as="q"><x-import component-from-global-scope="BLDemo.Badge" tone="{{q.ton}}" icon="{{q.icone}}" variant="{{q.variante}}">{{q.texte}}</x-import></sc-for>
+</div>
+<sc-if value="{{panneau.aCause}}"><p style="margin: 0; padding-top: 2px; font: 400 13px/18px var(--font-sans)"><span style="color: var(--muted-foreground)">Cause : </span>{{panneau.cause}}</p></sc-if>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<x-import component-from-global-scope="BLDemo.Button" variant="outline" size="sm" icon-right="chevron-right" on-click="{{panneau.allerRegles}}">Voir les règles</x-import>
+<x-import component-from-global-scope="BLDemo.Button" variant="outline" size="sm" icon-right="chevron-right" on-click="{{panneau.allerReperage}}">Voir l'arbre</x-import>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(236px, 100%), 1fr)); gap: var(--space-4) var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border)">
+
+<section style="display: grid; align-content: start; gap: 2px; min-width: 0">
+<h4 style="margin: 0 0 4px; font: 600 13px/18px var(--font-sans)">{{panneau.nbDependDe}}</h4>
+<sc-if value="{{panneau.sansDependDe}}"><span style="color: var(--muted-foreground)">—</span></sc-if>
+<sc-for list="{{panneau.dependDe}}" as="x">
+<button type="button" onClick="{{x.ouvrir}}" style="all: unset; box-sizing: border-box; display: grid; gap: 4px; width: calc(100% + 16px); margin: 0 -8px; padding: 6px 8px; border-radius: var(--radius-md); cursor: pointer" style-hover="background: var(--accent)" style-focus-visible="box-shadow: var(--focus-ring)">
+<span style="display: flex; align-items: baseline; gap: 6px"><span style="flex: none; color: var(--muted-foreground); font: 500 12px/16px var(--mono)">{{x.id}}</span><span style="font: 600 13px/18px var(--font-sans)">{{x.titre}}</span></span>
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px"><span style="font: 400 12px/16px var(--mono)">{{x.objet}}</span><x-import component-from-global-scope="BLDemo.Badge" tone="{{x.etat.ton}}" icon="{{x.etat.icone}}">{{x.etat.texte}}</x-import><span style="color: var(--muted-foreground); font: 400 12px/16px var(--font-sans)">{{x.confiance}}</span></span>
+</button>
+</sc-for>
+<sc-if value="{{panneau.plusDependDe.a}}"><div style="padding-top: 4px"><x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" icon-right="{{panneau.plusDependDe.icone}}" on-click="{{panneau.plusDependDe.basculer}}">{{panneau.plusDependDe.texte}}</x-import></div></sc-if>
+</section>
+
+<section style="display: grid; align-content: start; gap: 2px; min-width: 0">
+<h4 style="margin: 0 0 4px; font: 600 13px/18px var(--font-sans)">{{panneau.nbRequisePar}}</h4>
+<sc-if value="{{panneau.sansRequisePar}}"><span style="color: var(--muted-foreground)">—</span></sc-if>
+<sc-for list="{{panneau.requisePar}}" as="x">
+<button type="button" onClick="{{x.ouvrir}}" style="all: unset; box-sizing: border-box; display: grid; gap: 4px; width: calc(100% + 16px); margin: 0 -8px; padding: 6px 8px; border-radius: var(--radius-md); cursor: pointer" style-hover="background: var(--accent)" style-focus-visible="box-shadow: var(--focus-ring)">
+<span style="display: flex; align-items: baseline; gap: 6px"><span style="flex: none; color: var(--muted-foreground); font: 500 12px/16px var(--mono)">{{x.id}}</span><span style="font: 600 13px/18px var(--font-sans)">{{x.titre}}</span></span>
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px"><span style="font: 400 12px/16px var(--mono)">{{x.objet}}</span><x-import component-from-global-scope="BLDemo.Badge" tone="{{x.etat.ton}}" icon="{{x.etat.icone}}">{{x.etat.texte}}</x-import><span style="color: var(--muted-foreground); font: 400 12px/16px var(--font-sans)">{{x.confiance}}</span></span>
+</button>
+</sc-for>
+<sc-if value="{{panneau.plusRequisePar.a}}"><div style="padding-top: 4px"><x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" icon-right="{{panneau.plusRequisePar.icone}}" on-click="{{panneau.plusRequisePar.basculer}}">{{panneau.plusRequisePar.texte}}</x-import></div></sc-if>
+</section>
+
+<section style="display: grid; align-content: start; gap: 2px; min-width: 0">
+<h4 style="margin: 0 0 4px; font: 600 13px/18px var(--font-sans)">{{panneau.nbManquantes}}</h4>
+<sc-if value="{{panneau.sansManquantes}}"><span style="color: var(--muted-foreground)">—</span></sc-if>
+<sc-for list="{{panneau.manquantes}}" as="x">
+<button type="button" onClick="{{x.ouvrir}}" style="all: unset; box-sizing: border-box; display: grid; gap: 4px; width: calc(100% + 16px); margin: 0 -8px; padding: 6px 8px; border-radius: var(--radius-md); cursor: pointer" style-hover="background: var(--accent)" style-focus-visible="box-shadow: var(--focus-ring)">
+<span style="display: flex; align-items: baseline; gap: 6px"><span style="flex: none; color: var(--muted-foreground); font: 500 12px/16px var(--mono)">{{x.id}}</span><span style="font: 600 13px/18px var(--font-sans)">{{x.titre}}</span></span>
+<span style="display: flex"><x-import component-from-global-scope="BLDemo.StatusDot" tone="{{x.extraction.ton}}">{{x.extraction.texte}}</x-import></span>
+</button>
+</sc-for>
+<sc-if value="{{panneau.plusManquantes.a}}"><div style="padding-top: 4px"><x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" icon-right="{{panneau.plusManquantes.icone}}" on-click="{{panneau.plusManquantes.basculer}}">{{panneau.plusManquantes.texte}}</x-import></div></sc-if>
+</section>
+
+<div style="display: grid; align-content: start; gap: var(--space-4); min-width: 0">
+
+<section style="display: grid; align-content: start; gap: 6px; min-width: 0">
+<h4 style="margin: 0; font: 600 13px/18px var(--font-sans)">{{panneau.nbHorsManuel}}</h4>
+<sc-if value="{{panneau.sansHorsManuel}}"><span style="color: var(--muted-foreground)">—</span></sc-if>
+<sc-for list="{{panneau.horsManuel}}" as="obj"><span style="width: fit-content; max-width: 100%; overflow-wrap: anywhere; padding: 0 6px; border-radius: var(--radius-sm); background: var(--muted); font: 400 12px/20px var(--mono)">{{obj}}</span></sc-for>
+</section>
+
+<section style="display: grid; align-content: start; gap: 2px; min-width: 0">
+<h4 style="margin: 0 0 4px; font: 600 13px/18px var(--font-sans)">{{panneau.nbSous}}</h4>
+<sc-if value="{{panneau.sansSous}}"><span style="color: var(--muted-foreground)">—</span></sc-if>
+<sc-for list="{{panneau.sous}}" as="x">
+<button type="button" onClick="{{x.ouvrir}}" style="all: unset; box-sizing: border-box; display: grid; gap: 4px; width: calc(100% + 16px); margin: 0 -8px; padding: 6px 8px; border-radius: var(--radius-md); cursor: pointer" style-hover="background: var(--accent)" style-focus-visible="box-shadow: var(--focus-ring)">
+<span style="display: flex; align-items: baseline; gap: 6px"><span style="flex: none; color: var(--muted-foreground); font: 500 12px/16px var(--mono)">{{x.id}}</span><span style="font: 600 13px/18px var(--font-sans)">{{x.titre}}</span></span>
+<span style="display: flex"><x-import component-from-global-scope="BLDemo.StatusDot" tone="{{x.extraction.ton}}">{{x.extraction.texte}}</x-import></span>
+</button>
+</sc-for>
+</section>
+
+</div>
+
+</div>
+</div>
+</x-import>
+</div>
+</sc-if>
+
+</div>
+
+<x-import component-from-global-scope="BLDemo.Card" title="{{titreSocle}}" description="Les utilitaires partagés, extraits une fois pour toutes les fonctionnalités, et le nombre de fonctionnalités qui atteignent chacun.">
+<div style="display: grid; gap: 8px">
+<div style="columns: 264px; column-gap: var(--space-10)">
+<sc-for list="{{socle}}" as="u" hint-placeholder-count="4">
+<div title="{{u.titre}}" style="display: flex; align-items: center; gap: 12px; min-height: 32px; break-inside: avoid">
+<span style="flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: {{u.couleur}}; font: 400 13px/18px var(--mono); font-weight: {{u.poids}}">{{u.objet}}</span>
+<span aria-hidden="true" style="flex: none; width: 56px; height: 6px; overflow: hidden; border-radius: var(--radius-full); background: var(--muted)"><span style="display: block; width: {{u.part}}; height: 100%; border-radius: inherit; background: var(--primary)"></span></span>
+<span style="flex: none; width: 24px; text-align: right; color: var(--muted-foreground); font: 400 13px/18px var(--font-sans); font-variant-numeric: tabular-nums">{{u.compte}}</span>
+<span class="bl-sr">{{u.lecture}}</span>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{aSocleNote}}"><p class="bl-field-note">{{socleNote}}</p></sc-if>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="BLDemo.Card" flush="{{vrai}}" title="{{titreHors}}" description="Ces fonctionnalités ne peuvent pas être placées dans l'ordre d'extraction : leur périmètre, leur correspondance avec le manuel ou une autre cause l'empêche.">
+<x-import component-from-global-scope="BLDemo.DataTable" dense="{{vrai}}" columns="{{colonnesHors}}" rows="{{lignesHors}}" sort="{{triHors}}" on-sort-change="{{surTriHors}}" on-row-click="{{choisirHors}}" empty="Toutes les fonctionnalités sont dans l'ordre d'extraction." caption="Fonctionnalités hors de l'ordre"></x-import>
+<sc-if value="{{plusieursPagesHors}}">
+<div style="padding: 10px 20px; border-top: 1px solid var(--border)">
+<x-import component-from-global-scope="BLDemo.Pagination" page="{{pageHors}}" page-count="{{pagesHors}}" total="{{totalHors}}" page-size="{{parPageHors}}" on-page-change="{{surPageHors}}"></x-import>
+</div>
+</sc-if>
+</x-import>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"magasin":{"editor":null},"fonctionnalite":{"editor":"text","default":"F07.1"},"jeu":{"editor":"enum","options":["exemple","depart","intermediaire"],"default":"exemple"},"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1152,"height":1560}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.lien = window.Transposition.attacher(this, 'dependances');
+  }
+  componentDidMount() { this.lien.monter(); }
+  componentWillUnmount() { this.lien.demonter(); }
+  renderVals() {
+    var v = this.lien.vue();
+    v.vrai = true;
+    return v;
+  }
+}
+</script>
+</body>
+</html>

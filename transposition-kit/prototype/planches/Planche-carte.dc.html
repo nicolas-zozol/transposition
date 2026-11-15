@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Carte des appels : nœud, pastille et flèche</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/bldemo/tokens.css">
+<link rel="stylesheet" href="ds/bldemo/components/bundle.css">
+<script src="ds/bldemo/components/bundle.js"></script>
+<script src="transposition-exemple.js"></script>
+<script src="transposition-volumes.js"></script>
+<script src="transposition.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div data-theme="light" style="--tp-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace; display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-8); background: var(--card); color: var(--foreground); font: 400 14px/20px var(--font-sans)">
+
+<header style="display: grid; gap: 6px; max-width: 780px">
+<h2 style="margin: 0; font: 600 20px/28px var(--font-display)">Carte des appels</h2>
+<p style="margin: 0; color: var(--muted-foreground); text-wrap: pretty">Un nœud par appel, une flèche de la fonction à celle qu'elle appelle. Chaque variante ci-dessous est le composant lui-même, sans sa barre d'outils : la signature mère à gauche, la variante à droite. Un clic sélectionne, la pastille déplie.</p>
+</header>
+
+<section style="display: grid; gap: var(--space-4)">
+<h3 style="margin: 0; padding-bottom: 8px; border-bottom: 1px solid var(--border); font: 600 15px/22px var(--font-display)">Nœud</h3>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-5) var(--space-4)">
+<sc-for list="{{noeuds}}" as="s" hint-placeholder-count="10">
+<figure style="display: grid; align-content: start; gap: 8px; margin: 0; width: {{s.largeur}}">
+<dc-import name="CarteAppels" magasin="{{s.magasin}}" nu="{{vrai}}" hint-size="560px,96px"></dc-import>
+<figcaption style="display: grid; gap: 2px"><span style="font: 600 13px/18px var(--font-sans)">{{s.titre}}</span><span style="color: var(--muted-foreground); font: 400 12px/16px var(--font-sans); text-wrap: pretty">{{s.note}}</span></figcaption>
+</figure>
+</sc-for>
+</div>
+</section>
+
+<section style="display: grid; gap: var(--space-4)">
+<h3 style="margin: 0; padding-bottom: 8px; border-bottom: 1px solid var(--border); font: 600 15px/22px var(--font-display)">Déplier une branche</h3>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-5) var(--space-4)">
+<sc-for list="{{branches}}" as="s" hint-placeholder-count="2">
+<figure style="display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 8px; margin: 0; width: {{s.largeur}}; max-width: 100%">
+<dc-import name="CarteAppels" magasin="{{s.magasin}}" nu="{{vrai}}" hint-size="100%,220px"></dc-import>
+<figcaption style="display: grid; gap: 2px"><span style="font: 600 13px/18px var(--font-sans)">{{s.titre}}</span><span style="color: var(--muted-foreground); font: 400 12px/16px var(--font-sans); text-wrap: pretty">{{s.note}}</span></figcaption>
+</figure>
+</sc-for>
+</div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1240,"height":2010}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var T = window.Transposition, V = window.TranspositionVolumes;
+    var SIG = 'w_facturation.ue_facturer_dossier';
+    var fn = function (objet, lignes, nature) { return { objet: objet, nature: nature || 'fonctionObjet', fichier: 'facturation/facturation.pbl.src/' + objet + '.sru', debut: 120, lignes: lignes }; };
+    var fonctions = function () {
+      return {
+        'w_facturation.ue_facturer_dossier': fn('w_facturation', 126, 'evenement'),
+        'w_facturation.uf_controle_dossier': fn('w_facturation', 96),
+        'w_facturation.uf_controle_identite': fn('w_facturation', 61),
+        'w_facturation.uf_controle_couverture': fn('w_facturation', 74),
+        'w_facturation.ue_apres_facturation': fn('w_facturation', 37, 'evenement'),
+        'f_cle_nir.f_cle_nir': fn('f_cle_nir', 23, 'fonctionGlobale'),
+        'f_est_numerique.f_est_numerique': fn('f_est_numerique', 12, 'fonctionGlobale'),
+        'f_lit_parametre.f_lit_parametre': fn('f_lit_parametre', 31, 'fonctionGlobale'),
+        'u_journal.uf_trace': fn('u_journal', 40),
+        'u_calcul_ghs.uf_calcule': fn('u_calcul_ghs', 300),
+        'w_sejour.uf_calcul_supplements': fn('w_sejour', 412),
+        'w_sejour.uf_supplement_chambre': fn('w_sejour', 86),
+        'u_tarification.uf_recherche_tarif_applicable_a_la_date': fn('u_tarification', 118)
+      };
+    };
+    var appel = function (fonction, mode, appels, post) {
+      var x = { fonction: fonction, ligne: 200 + fonction.length, mode: mode || 'developpement' };
+      if (appels) x.appels = appels;
+      if (post) x.post = true;
+      return x;
+    };
+    /* Un jeu de données minimal : la signature, ses appels, et les tailles calculées comme le convertisseur les écrirait. */
+    var jeu = function (appels, plus) {
+      plus = plus || {};
+      var F = fonctions(), arbres = {};
+      arbres[SIG] = { arrets: plus.arrets || [], appels: appels };
+      Object.keys(plus.arbres || {}).forEach(function (k) { arbres[k] = plus.arbres[k]; });
+      V.mesurer(F, arbres);
+      return {
+        versionFormat: 1, produitLe: '2026-11-13', application: 'Planche', fonctions: F, arbres: arbres,
+        fonctionnalites: [{ id: 'F22.1', titre: 'Facturation du dossier', page: 61, reperage: { signature: SIG, delimitation: 'retenue' }, extraction: 'notExtracted' }].concat(plus.fonctionnalites || []),
+        dependances: { socle: plus.socle || [], aretes: [] }
+      };
+    };
+    var magasin = function (donnees, options) {
+      var o = options || {};
+      var m = T.creerMagasin({ donnees: donnees, fonctionnalite: 'F22.1', renvois: o.renvois ? 'oui' : 'non', niveaux: o.niveaux });
+      var a = m.etat.index.arbres[SIG];
+      (o.replies || []).forEach(function (cle) { m.basculerCarte(a, a.parCle[cle]); });
+      m.etat.cleSel = o.selection || '';
+      return m;
+    };
+    var specimen = function (titre, note, donnees, options) {
+      return { titre: titre, note: note, largeur: (options && options.largeur) || '562px', magasin: magasin(donnees, options) };
+    };
+    var branche = function () {
+      return [appel('w_facturation.uf_controle_dossier', 'developpement', [
+        appel('w_facturation.uf_controle_identite', 'developpement', [appel('f_cle_nir.f_cle_nir'), appel('f_est_numerique.f_est_numerique')]),
+        appel('w_facturation.uf_controle_couverture', 'developpement', [appel('u_calcul_ghs.uf_calcule', 'arret')])
+      ])];
+    };
+    var ghs = [{ objet: 'u_calcul_ghs', classe: 'autreFonctionnalite', raison: 'Calcule le tarif du séjour selon son groupe homogène.', etat: 'retenue', confiance: 95, fonctionnalites: ['F09.1'] }];
+    var f09 = [{ id: 'F09.1', titre: 'Calcul des GHS', page: 49, reperage: { delimitation: 'retenue' }, extraction: 'notExtracted' }];
+    var renvois = function () {
+      return [appel('f_lit_parametre.f_lit_parametre'), appel('w_facturation.uf_controle_identite', 'developpement', [appel('f_lit_parametre.f_lit_parametre', 'reference'), appel('f_cle_nir.f_cle_nir')])];
+    };
+
+    this.noeuds = [
+      specimen('Fonction développée', 'Sans appel : son nom, puis ses lignes.', jeu([appel('f_cle_nir.f_cle_nir')])),
+      specimen('Branche repliée', 'La pastille donne la taille de la branche, en fonctions, elle comprise. Un clic la déplie.', jeu(branche(), { arrets: ghs, fonctionnalites: f09 }), { replies: ['r.0'] }),
+      specimen('Arrêt technique', "L'arbre s'arrête à cet objet, qui ne porte pas de règle de facturation.", jeu([appel('u_journal.uf_trace', 'arret')], { arrets: [{ objet: 'u_journal', classe: 'technique', raison: 'Journal technique.', etat: 'retenue', confiance: 90 }] })),
+      specimen('Arrêt vers une autre fonctionnalité', "La flèche du nœud ouvre l'arbre de la fonctionnalité visée.", jeu([appel('u_calcul_ghs.uf_calcule', 'arret')], { arrets: ghs, fonctionnalites: f09 })),
+      specimen('Autre arbre', "Signature mère d'une autre fonctionnalité : la pastille donne la taille de son arbre, la flèche l'ouvre.", jeu([appel('w_sejour.uf_calcul_supplements', 'autreArbre')], {
+        arbres: { 'w_sejour.uf_calcul_supplements': { appels: [appel('w_sejour.uf_supplement_chambre')] } },
+        fonctionnalites: [{ id: 'F07.1.a', titre: 'Suppléments de séjour', page: 31, reperage: { signature: 'w_sejour.uf_calcul_supplements', delimitation: 'retenue' }, extraction: 'notExtracted' }]
+      })),
+      specimen('Appel en différé', "L'horloge se pose sur la flèche : l'appel est lancé après l'événement en cours.", jeu([appel('w_facturation.ue_apres_facturation', 'developpement', null, true)])),
+      specimen('Fonction du socle', 'Le badge Socle marque un objet partagé par plusieurs fonctionnalités.', jeu([appel('f_lit_parametre.f_lit_parametre')], { socle: [{ objet: 'f_lit_parametre', origine: 'fanIn', fonctionnalites: ['F03.1', 'F07.1', 'F22.1'] }] })),
+      specimen('Sélectionnée', 'Bordure indigo doublée ; le chemin depuis la signature passe en indigo.', jeu([appel('f_cle_nir.f_cle_nir')]), { selection: 'r.0' }),
+      specimen('Nom long', "L'objet s'efface d'abord, puis le nom se coupe ; l'identifiant complet est en infobulle.", jeu([appel('u_tarification.uf_recherche_tarif_applicable_a_la_date')])),
+      specimen('Renvois masqués', 'Réglage par défaut : la fonction qui appelle en garde le compte, ici « 1 renvoi ».', jeu(renvois()), { largeur: '846px' }),
+      specimen('Renvois affichés', 'Cadre pointillé : la fonction est développée ailleurs dans cet arbre. La flèche du nœud y mène.', jeu(renvois()), { largeur: '846px', renvois: true })
+    ];
+
+    this.branches = [
+      specimen('Repliée au premier niveau', "Cliquez la pastille : la branche grandit d'un niveau, vers la droite.", jeu(branche(), { arrets: ghs, fonctionnalites: f09 }), { largeur: '100%', niveaux: 1 }),
+      specimen('Entièrement dépliée', 'Une pastille au contour fin replie la branche ; le parent reste centré sur ses appels.', jeu(branche(), { arrets: ghs, fonctionnalites: f09 }), { largeur: '100%', niveaux: 9 })
+    ];
+    this.magasins = this.noeuds.concat(this.branches).map(function (s) { return s.magasin; });
+  }
+  componentDidMount() {
+    var moi = this;
+    this.offs = this.magasins.map(function (m) { return m.abonner(function () { moi.forceUpdate(); }); });
+  }
+  componentWillUnmount() { (this.offs || []).forEach(function (off) { off(); }); }
+  renderVals() { return { noeuds: this.noeuds, branches: this.branches, vrai: true }; }
+}
+</script>
+</body>
+</html>

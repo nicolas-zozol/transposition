@@ -1,0 +1,1160 @@
+{
+  "versionFormat": 1,
+  "produitLe": "2026-11-13",
+  "application": "Facturation clinique",
+  "fonctions": {
+    "w_sejour.ue_forfait_journalier": {
+      "objet": "w_sejour",
+      "nature": "evenement",
+      "fichier": "admin/sejour.pbl.src/w_sejour.srw",
+      "debut": 1210,
+      "lignes": 148,
+      "datawindows": [
+        "d_lignes_sejour"
+      ],
+      "nonResolus": 2
+    },
+    "w_sejour.uf_exoneration": {
+      "objet": "w_sejour",
+      "nature": "fonctionObjet",
+      "fichier": "admin/sejour.pbl.src/w_sejour.srw",
+      "debut": 1402,
+      "lignes": 64
+    },
+    "w_sejour.uf_lire_dossier": {
+      "objet": "w_sejour",
+      "nature": "fonctionObjet",
+      "fichier": "admin/sejour.pbl.src/w_sejour.srw",
+      "debut": 1620,
+      "lignes": 88,
+      "datawindows": [
+        "d_dossier"
+      ],
+      "nonResolus": 3
+    },
+    "w_sejour.ue_recalcul_sejour": {
+      "objet": "w_sejour",
+      "nature": "evenement",
+      "fichier": "admin/sejour.pbl.src/w_sejour.srw",
+      "debut": 2010,
+      "lignes": 126,
+      "nonResolus": 1
+    },
+    "w_sejour.uf_calcul_supplements": {
+      "objet": "w_sejour",
+      "nature": "fonctionObjet",
+      "fichier": "admin/sejour.pbl.src/w_sejour.srw",
+      "debut": 2140,
+      "lignes": 412,
+      "datawindows": [
+        "d_lignes_sejour",
+        "d_mouvements"
+      ],
+      "nonResolus": 9
+    },
+    "w_sejour.uf_type_chambre": {
+      "objet": "w_sejour",
+      "nature": "fonctionObjet",
+      "fichier": "admin/sejour.pbl.src/w_sejour.srw",
+      "debut": 2560,
+      "lignes": 36
+    },
+    "w_sejour.ue_dernier_jour": {
+      "objet": "w_sejour",
+      "nature": "evenement",
+      "fichier": "admin/sejour.pbl.src/w_sejour.srw",
+      "debut": 3050,
+      "lignes": 182,
+      "nonResolus": 1
+    },
+    "w_sejour.ue_tri_lignes": {
+      "objet": "w_sejour",
+      "nature": "evenement",
+      "fichier": "admin/sejour.pbl.src/w_sejour.srw",
+      "debut": 3240,
+      "lignes": 14
+    },
+    "w_sejour.ue_repartition_payeurs": {
+      "objet": "w_sejour",
+      "nature": "evenement",
+      "fichier": "admin/sejour.pbl.src/w_sejour.srw",
+      "debut": 3300,
+      "lignes": 96,
+      "datawindows": [
+        "d_lignes_sejour"
+      ],
+      "nonResolus": 2
+    },
+    "w_sejour.uf_part_mutuelle": {
+      "objet": "w_sejour",
+      "nature": "fonctionObjet",
+      "fichier": "admin/sejour.pbl.src/w_sejour.srw",
+      "debut": 3410,
+      "lignes": 58
+    },
+    "w_sejour.ue_calcule_ghs": {
+      "objet": "w_sejour",
+      "nature": "evenement",
+      "fichier": "admin/sejour.pbl.src/w_sejour.srw",
+      "debut": 4100,
+      "lignes": 204,
+      "datawindows": [
+        "d_ghs"
+      ],
+      "nonResolus": 6
+    },
+    "u_calcul_ghs.uf_calcule": {
+      "objet": "u_calcul_ghs",
+      "nature": "fonctionObjet",
+      "fichier": "commun/taa.pbl.src/u_calcul_ghs.sru",
+      "debut": 310,
+      "lignes": 138,
+      "nonResolus": 4
+    },
+    "u_calcul_ghs.uf_cherche_ghs": {
+      "objet": "u_calcul_ghs",
+      "nature": "fonctionObjet",
+      "fichier": "commun/taa.pbl.src/u_calcul_ghs.sru",
+      "debut": 460,
+      "lignes": 112,
+      "datawindows": [
+        "d_tarifs_ghs"
+      ],
+      "nonResolus": 2
+    },
+    "u_calcul_ghs.ue_controle_bornes": {
+      "objet": "u_calcul_ghs",
+      "nature": "evenement",
+      "fichier": "commun/taa.pbl.src/u_calcul_ghs.sru",
+      "debut": 590,
+      "lignes": 44
+    },
+    "uo_mutuelle.uf_prise_en_charge": {
+      "objet": "uo_mutuelle",
+      "nature": "fonctionObjet",
+      "fichier": "admin/mutuelle.pbl.src/uo_mutuelle.sru",
+      "debut": 220,
+      "lignes": 164,
+      "datawindows": [
+        "d_contrats_mutuelle"
+      ],
+      "nonResolus": 5
+    },
+    "uo_mutuelle.uf_taux_contrat": {
+      "objet": "uo_mutuelle",
+      "nature": "fonctionObjet",
+      "fichier": "admin/mutuelle.pbl.src/uo_mutuelle.sru",
+      "debut": 400,
+      "lignes": 73,
+      "datawindows": [
+        "d_contrats_mutuelle"
+      ],
+      "nonResolus": 1
+    },
+    "u_bandeau.uf_affiche": {
+      "objet": "u_bandeau",
+      "nature": "fonctionObjet",
+      "fichier": "commun/presentation.pbl.src/u_bandeau.sru"
+    },
+    "f_date_vide.f_date_vide": {
+      "objet": "f_date_vide",
+      "nature": "fonctionGlobale",
+      "fichier": "commun/outils.pbl.src/f_date_vide.srf",
+      "debut": 1,
+      "lignes": 6
+    },
+    "f_lit_parametre.f_lit_parametre": {
+      "objet": "f_lit_parametre",
+      "nature": "fonctionGlobale",
+      "fichier": "commun/outils.pbl.src/f_lit_parametre.srf",
+      "debut": 1,
+      "lignes": 31,
+      "datawindows": [
+        "d_parametres"
+      ]
+    },
+    "f_arrondi.f_arrondi": {
+      "objet": "f_arrondi",
+      "nature": "fonctionGlobale",
+      "fichier": "commun/outils.pbl.src/f_arrondi.srf",
+      "debut": 1,
+      "lignes": 9
+    },
+    "f_tarif_produit.f_tarif_produit": {
+      "objet": "f_tarif_produit",
+      "nature": "fonctionGlobale",
+      "fichier": "commun/tarifs.pbl.src/f_tarif_produit.srf",
+      "debut": 1,
+      "lignes": 42,
+      "datawindows": [
+        "d_tarifs"
+      ],
+      "nonResolus": 1
+    },
+    "f_coefficient_mco.f_coefficient_mco": {
+      "objet": "f_coefficient_mco",
+      "nature": "fonctionGlobale",
+      "fichier": "commun/taa.pbl.src/f_coefficient_mco.srf",
+      "debut": 1,
+      "lignes": 52,
+      "datawindows": [
+        "d_coefficients"
+      ]
+    }
+  },
+  "arbres": {
+    "w_sejour.ue_forfait_journalier": {
+      "taille": {
+        "fonctions": 5,
+        "lignes": 291,
+        "profondeur": 2,
+        "datawindows": 3,
+        "nonResolus": 3,
+        "arrets": 0,
+        "posts": 0
+      },
+      "appels": [
+        {
+          "fonction": "f_lit_parametre.f_lit_parametre",
+          "ligne": 1222,
+          "mode": "developpement"
+        },
+        {
+          "fonction": "w_sejour.uf_exoneration",
+          "ligne": 1248,
+          "mode": "developpement",
+          "taille": {
+            "fonctions": 2,
+            "lignes": 70,
+            "profondeur": 1,
+            "datawindows": 0,
+            "nonResolus": 0,
+            "arrets": 0,
+            "posts": 0
+          },
+          "appels": [
+            {
+              "fonction": "f_date_vide.f_date_vide",
+              "ligne": 1420,
+              "mode": "developpement"
+            }
+          ]
+        },
+        {
+          "fonction": "f_tarif_produit.f_tarif_produit",
+          "ligne": 1290,
+          "mode": "developpement"
+        },
+        {
+          "fonction": "f_date_vide.f_date_vide",
+          "ligne": 1301,
+          "mode": "reference"
+        }
+      ]
+    },
+    "w_sejour.ue_recalcul_sejour": {
+      "taille": {
+        "fonctions": 12,
+        "lignes": 1100,
+        "profondeur": 2,
+        "datawindows": 5,
+        "nonResolus": 17,
+        "arrets": 3,
+        "posts": 2
+      },
+      "arrets": [
+        {
+          "objet": "u_bandeau",
+          "classe": "technique",
+          "raison": "Bandeau de titre affiché en tête de fenêtre, sans règle de facturation.",
+          "etat": "candidate",
+          "confiance": 90
+        },
+        {
+          "objet": "u_calcul_ghs",
+          "classe": "autreFonctionnalite",
+          "raison": "Calcule le tarif du séjour selon son groupe homogène, décrit page 49 du manuel.",
+          "etat": "candidate",
+          "confiance": 95,
+          "fonctionnalites": [
+            "F09.1"
+          ]
+        },
+        {
+          "objet": "uo_mutuelle",
+          "classe": "autreFonctionnalite",
+          "raison": "Détermine la part du séjour prise en charge par la mutuelle, décrite page 44 du manuel.",
+          "etat": "candidate",
+          "confiance": "haute",
+          "fonctionnalites": [
+            "F12.1"
+          ]
+        }
+      ],
+      "appels": [
+        {
+          "fonction": "u_bandeau.uf_affiche",
+          "ligne": 2018,
+          "mode": "arret"
+        },
+        {
+          "fonction": "f_lit_parametre.f_lit_parametre",
+          "ligne": 2024,
+          "mode": "developpement"
+        },
+        {
+          "fonction": "w_sejour.uf_lire_dossier",
+          "ligne": 2031,
+          "mode": "developpement",
+          "taille": {
+            "fonctions": 3,
+            "lignes": 125,
+            "profondeur": 1,
+            "datawindows": 2,
+            "nonResolus": 3,
+            "arrets": 0,
+            "posts": 0
+          },
+          "appels": [
+            {
+              "fonction": "f_date_vide.f_date_vide",
+              "ligne": 1644,
+              "mode": "developpement"
+            },
+            {
+              "fonction": "f_lit_parametre.f_lit_parametre",
+              "ligne": 1671,
+              "mode": "reference"
+            }
+          ]
+        },
+        {
+          "fonction": "w_sejour.uf_calcul_supplements",
+          "ligne": 2064,
+          "mode": "autreArbre"
+        },
+        {
+          "fonction": "u_calcul_ghs.uf_calcule",
+          "ligne": 2071,
+          "mode": "arret"
+        },
+        {
+          "fonction": "uo_mutuelle.uf_prise_en_charge",
+          "ligne": 2080,
+          "mode": "arret"
+        },
+        {
+          "fonction": "w_sejour.ue_repartition_payeurs",
+          "ligne": 2131,
+          "mode": "autreArbre",
+          "post": true
+        }
+      ]
+    },
+    "w_sejour.uf_calcul_supplements": {
+      "taille": {
+        "fonctions": 7,
+        "lignes": 723,
+        "profondeur": 2,
+        "datawindows": 4,
+        "nonResolus": 11,
+        "arrets": 1,
+        "posts": 1
+      },
+      "arrets": [
+        {
+          "objet": "u_bandeau",
+          "classe": "technique",
+          "raison": "Bandeau de titre affiché en tête de fenêtre, sans règle de facturation.",
+          "etat": "retenue",
+          "confiance": 90
+        }
+      ],
+      "appels": [
+        {
+          "fonction": "u_bandeau.uf_affiche",
+          "ligne": 2160,
+          "mode": "arret"
+        },
+        {
+          "fonction": "w_sejour.uf_type_chambre",
+          "ligne": 2196,
+          "mode": "developpement"
+        },
+        {
+          "fonction": "f_tarif_produit.f_tarif_produit",
+          "ligne": 2302,
+          "mode": "developpement"
+        },
+        {
+          "fonction": "w_sejour.ue_dernier_jour",
+          "ligne": 2330,
+          "mode": "developpement",
+          "taille": {
+            "fonctions": 3,
+            "lignes": 219,
+            "profondeur": 1,
+            "datawindows": 1,
+            "nonResolus": 1,
+            "arrets": 0,
+            "posts": 0
+          },
+          "appels": [
+            {
+              "fonction": "f_lit_parametre.f_lit_parametre",
+              "ligne": 3071,
+              "mode": "developpement"
+            },
+            {
+              "fonction": "f_date_vide.f_date_vide",
+              "ligne": 3118,
+              "mode": "developpement"
+            }
+          ]
+        },
+        {
+          "fonction": "f_date_vide.f_date_vide",
+          "ligne": 2518,
+          "mode": "reference"
+        },
+        {
+          "fonction": "w_sejour.ue_tri_lignes",
+          "ligne": 2549,
+          "mode": "developpement",
+          "post": true
+        }
+      ]
+    },
+    "w_sejour.ue_repartition_payeurs": {
+      "taille": {
+        "fonctions": 3,
+        "lignes": 163,
+        "profondeur": 1,
+        "datawindows": 1,
+        "nonResolus": 2,
+        "arrets": 0,
+        "posts": 0
+      },
+      "appels": [
+        {
+          "fonction": "w_sejour.uf_part_mutuelle",
+          "ligne": 3322,
+          "mode": "developpement"
+        },
+        {
+          "fonction": "f_arrondi.f_arrondi",
+          "ligne": 3388,
+          "mode": "developpement"
+        }
+      ]
+    },
+    "w_sejour.ue_calcule_ghs": {
+      "taille": {
+        "fonctions": 7,
+        "lignes": 590,
+        "profondeur": 3,
+        "datawindows": 4,
+        "nonResolus": 12,
+        "arrets": 1,
+        "posts": 1
+      },
+      "arrets": [
+        {
+          "objet": "uo_mutuelle",
+          "classe": "autreFonctionnalite",
+          "raison": "Détermine la part du séjour prise en charge par la mutuelle, décrite page 44 du manuel.",
+          "etat": "retenue",
+          "confiance": "haute",
+          "fonctionnalites": [
+            "F12.1"
+          ]
+        }
+      ],
+      "appels": [
+        {
+          "fonction": "f_lit_parametre.f_lit_parametre",
+          "ligne": 4112,
+          "mode": "developpement"
+        },
+        {
+          "fonction": "u_calcul_ghs.uf_calcule",
+          "ligne": 4150,
+          "mode": "developpement",
+          "taille": {
+            "fonctions": 5,
+            "lignes": 355,
+            "profondeur": 2,
+            "datawindows": 2,
+            "nonResolus": 6,
+            "arrets": 0,
+            "posts": 1
+          },
+          "appels": [
+            {
+              "fonction": "u_calcul_ghs.uf_cherche_ghs",
+              "ligne": 334,
+              "mode": "developpement"
+            },
+            {
+              "fonction": "f_coefficient_mco.f_coefficient_mco",
+              "ligne": 371,
+              "mode": "developpement"
+            },
+            {
+              "fonction": "u_calcul_ghs.ue_controle_bornes",
+              "ligne": 440,
+              "mode": "developpement",
+              "post": true,
+              "taille": {
+                "fonctions": 2,
+                "lignes": 53,
+                "profondeur": 1,
+                "datawindows": 0,
+                "nonResolus": 0,
+                "arrets": 0,
+                "posts": 0
+              },
+              "appels": [
+                {
+                  "fonction": "f_arrondi.f_arrondi",
+                  "ligne": 612,
+                  "mode": "developpement"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "fonction": "uo_mutuelle.uf_prise_en_charge",
+          "ligne": 4268,
+          "mode": "arret"
+        }
+      ]
+    },
+    "uo_mutuelle.uf_prise_en_charge": {
+      "taille": {
+        "fonctions": 4,
+        "lignes": 277,
+        "profondeur": 1,
+        "datawindows": 2,
+        "nonResolus": 6,
+        "arrets": 0,
+        "posts": 0
+      },
+      "appels": [
+        {
+          "fonction": "uo_mutuelle.uf_taux_contrat",
+          "ligne": 252,
+          "mode": "developpement"
+        },
+        {
+          "fonction": "f_lit_parametre.f_lit_parametre",
+          "ligne": 261,
+          "mode": "developpement"
+        },
+        {
+          "fonction": "f_arrondi.f_arrondi",
+          "ligne": 370,
+          "mode": "developpement"
+        }
+      ]
+    }
+  },
+  "fonctionnalites": [
+    {
+      "id": "F03.1",
+      "titre": "Calcul du forfait journalier",
+      "page": 18,
+      "infix": "FORFAITJOUR",
+      "reperage": {
+        "signature": "w_sejour.ue_forfait_journalier",
+        "correspondance": {
+          "statut": "cli",
+          "confiance": "haute"
+        },
+        "delimitation": "retenue",
+        "ordre": {
+          "rang": 1,
+          "statut": "ordonnee",
+          "extractible": true
+        }
+      },
+      "extraction": "extracted",
+      "decoupage": {
+        "gardees": 3,
+        "coupees": 1,
+        "couvertes": 2,
+        "techniques": 1,
+        "sansTest": 0
+      },
+      "regles": [
+        {
+          "id": "RM-FORFAITJOUR-1",
+          "enonce": "Le forfait journalier est dû pour chaque jour de présence du patient, jour de sortie compris.",
+          "code": [
+            {
+              "regle": "G-FORFAITJOUR-1",
+              "fonction": "w_sejour.ue_forfait_journalier",
+              "debut": 1236,
+              "fin": 1301
+            }
+          ],
+          "exemples": [
+            {
+              "titre": "Séjour de quatre jours",
+              "francais": "Un patient hospitalisé du 3 au 6 mars 2025 doit quatre forfaits journaliers, soit 80 € au tarif de 20 €.",
+              "gherkin": "Scénario: Séjour de quatre jours\n  Étant donné un séjour du 03/03/2025 au 06/03/2025\n  Et un forfait journalier à 20 €\n  Quand on calcule le forfait journalier\n  Alors la ligne facturée est :\n    | produit | du         | au         | quantité | montant |\n    | FJ      | 03/03/2025 | 06/03/2025 | 4        | 80 €    |\n",
+              "tests": [
+                "U-01",
+                "dossier-25-412"
+              ],
+              "verdict": "conforme"
+            }
+          ]
+        },
+        {
+          "id": "RM-FORFAITJOUR-2",
+          "enonce": "Un patient exonéré ne doit aucun forfait journalier.",
+          "code": [
+            {
+              "regle": "G-FORFAITJOUR-2",
+              "fonction": "w_sejour.uf_exoneration",
+              "debut": 1402,
+              "fin": 1465
+            }
+          ],
+          "exemples": [
+            {
+              "titre": "Séjour en maternité",
+              "francais": "Une patiente hospitalisée en maternité du 3 au 6 mars 2025 ne doit aucun forfait journalier.",
+              "gherkin": "Scénario: Séjour en maternité\n  Étant donné un séjour en maternité du 03/03/2025 au 06/03/2025\n  Quand on calcule le forfait journalier\n  Alors aucun forfait journalier n'est facturé\n",
+              "tests": [
+                "U-02",
+                "dossier-25-518"
+              ],
+              "verdict": "conforme"
+            }
+          ]
+        }
+      ],
+      "tests": {
+        "verdict": "conforme",
+        "unitaires": {
+          "total": 2,
+          "ok": 2
+        },
+        "integration": {
+          "total": 3,
+          "identique": 3
+        },
+        "liste": [
+          {
+            "id": "U-01",
+            "nature": "unitaire",
+            "libelle": "Quatre jours de présence",
+            "verdict": "ok"
+          },
+          {
+            "id": "U-02",
+            "nature": "unitaire",
+            "libelle": "Patiente exonérée",
+            "verdict": "ok"
+          },
+          {
+            "id": "dossier-25-412",
+            "nature": "integration",
+            "libelle": "Médecine, quatre jours",
+            "verdict": "identique"
+          },
+          {
+            "id": "dossier-25-518",
+            "nature": "integration",
+            "libelle": "Maternité, quatre jours",
+            "verdict": "identique"
+          },
+          {
+            "id": "dossier-24-1930",
+            "nature": "integration",
+            "libelle": "Médecine, un jour",
+            "verdict": "identique"
+          }
+        ]
+      }
+    },
+    {
+      "id": "F07.1",
+      "titre": "Recalcul des frais de séjour",
+      "page": 27,
+      "reperage": {
+        "signature": "w_sejour.ue_recalcul_sejour",
+        "correspondance": {
+          "statut": "cli",
+          "confiance": "haute"
+        },
+        "delimitation": "candidate",
+        "ordre": {
+          "rang": 3,
+          "statut": "ordonnee",
+          "extractible": false,
+          "manquantes": [
+            "F09.1",
+            "F12.1"
+          ]
+        }
+      },
+      "extraction": "notExtracted"
+    },
+    {
+      "id": "F07.1.a",
+      "mere": "F07.1",
+      "titre": "Supplément pour chambre particulière",
+      "page": 27,
+      "infix": "CHAMBREPART",
+      "reperage": {
+        "signature": "w_sejour.uf_calcul_supplements",
+        "delimitation": "retenue"
+      },
+      "extraction": "extracted",
+      "decoupage": {
+        "gardees": 6,
+        "coupees": 2,
+        "couvertes": 4,
+        "techniques": 1,
+        "sansTest": 1
+      },
+      "regles": [
+        {
+          "id": "RM-CHAMBREPART-1",
+          "enonce": "Chaque nuit passée en chambre particulière donne lieu à un supplément, au tarif de la chambre occupée.",
+          "code": [
+            {
+              "regle": "G-CHAMBREPART-1",
+              "fonction": "w_sejour.uf_calcul_supplements",
+              "debut": 2196,
+              "fin": 2291
+            },
+            {
+              "regle": "G-CHAMBREPART-2",
+              "fonction": "w_sejour.uf_type_chambre",
+              "debut": 2560,
+              "fin": 2595
+            }
+          ],
+          "exemples": [
+            {
+              "titre": "Deux chambres pendant le séjour",
+              "francais": "Un patient passe trois nuits dans une chambre à 75 €, puis deux nuits dans une chambre à 62 € : il doit cinq suppléments, sur deux lignes, soit 349 €.",
+              "gherkin": "Scénario: Deux chambres pendant le séjour\n  Étant donné un séjour du 07/01/2025 au 12/01/2025, sortie à 11 h\n  Et les lignes de séjour suivantes :\n    | chambre | tarif | du         | au         |\n    | P3      | 75 €  | 07/01/2025 | 09/01/2025 |\n    | P2      | 62 €  | 10/01/2025 | 12/01/2025 |\n  Quand on calcule les frais de séjour\n  Alors les suppléments facturés sont :\n    | produit | du         | au         | quantité | prix unitaire | montant |\n    | SH3     | 07/01/2025 | 09/01/2025 | 3        | 75 €          | 225 €   |\n    | SH2     | 10/01/2025 | 11/01/2025 | 2        | 62 €          | 124 €   |\n",
+              "tests": [
+                "U-01",
+                "dossier-25-962"
+              ],
+              "verdict": "conforme"
+            }
+          ]
+        },
+        {
+          "id": "RM-CHAMBREPART-2",
+          "enonce": "Le jour de sortie ne donne pas lieu à un supplément.",
+          "code": [
+            {
+              "regle": "G-CHAMBREPART-3",
+              "fonction": "w_sejour.ue_dernier_jour",
+              "debut": 3050,
+              "fin": 3231
+            }
+          ],
+          "exemples": [
+            {
+              "titre": "Sortie avant 14 h",
+              "francais": "Un patient sorti le 9 janvier à 11 h doit son dernier supplément pour la nuit du 8 janvier.",
+              "gherkin": "Plan du scénario: Sortie avant 14 h\n  Étant donné le dossier témoin \"<dossier>\"\n  Et une sortie le <sortie> à <heure>\n  Quand on calcule les frais de séjour\n  Alors le dernier supplément facturé est celui du <dernier jour>\n\n  Exemples:\n    | dossier | sortie     | heure | dernier jour |\n    | 25-743  | 09/01/2025 | 11 h  | 08/01/2025   |\n    | 25-962  | 12/01/2025 | 11 h  | 11/01/2025   |\n",
+              "tests": [
+                "U-02",
+                "dossier-25-743",
+                "dossier-25-962"
+              ],
+              "verdict": "conforme"
+            },
+            {
+              "titre": "Sortie à 14 h ou après",
+              "francais": "Un patient entré le 11 septembre 2026 et sorti le 18 septembre à 18 h doit sept suppléments : le jour de sortie n'est pas compté.",
+              "gherkin": "Scénario: Sortie à 14 h ou après\n  Étant donné un séjour du 11/09/2026 au 18/09/2026 en chambre P3 à 75 €\n  Et une sortie à 18 h\n  Quand on calcule les frais de séjour\n  Alors les suppléments facturés sont :\n    | produit | du         | au         | quantité | prix unitaire | montant |\n    | SH3     | 11/09/2026 | 17/09/2026 | 7        | 75 €          | 525 €   |\n",
+              "tests": [
+                "dossier-26-90"
+              ],
+              "verdict": "ecartExplique",
+              "explication": "La recette facture huit suppléments : sa version, plus récente que le code extrait, compte le jour de sortie à partir de 14 h."
+            }
+          ]
+        },
+        {
+          "id": "RM-CHAMBREPART-3",
+          "enonce": "Quand la mutuelle du patient fixe son propre tarif, ce tarif remplace celui de la chambre.",
+          "code": [
+            {
+              "regle": "G-CHAMBREPART-4",
+              "fonction": "w_sejour.uf_calcul_supplements",
+              "debut": 2302,
+              "fin": 2340
+            }
+          ],
+          "exemples": [
+            {
+              "titre": "Mutuelle au tarif de 40 €",
+              "francais": "Un patient en chambre à 75 € dont la mutuelle fixe le supplément à 40 € doit 40 € par nuit.",
+              "gherkin": "Scénario: Mutuelle au tarif de 40 €\n  Étant donné un séjour du 07/01/2025 au 09/01/2025 en chambre P3 à 75 €\n  Et une mutuelle qui fixe le supplément à 40 €\n  Quand on calcule les frais de séjour\n  Alors les suppléments facturés sont :\n    | produit | du         | au         | quantité | prix unitaire | montant |\n    | SH3     | 07/01/2025 | 08/01/2025 | 2        | 40 €          | 80 €    |\n",
+              "verdict": "nonVerifie",
+              "explication": "Aucun dossier de la recette ne porte ce cas."
+            }
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "id": "Q-CHAMBREPART-1",
+          "texte": "Faut-il facturer le jour de sortie quand le patient sort à 14 h ou après ?",
+          "regles": [
+            "RM-CHAMBREPART-2"
+          ]
+        },
+        {
+          "id": "Q-CHAMBREPART-2",
+          "texte": "Un séjour sans date de sortie doit-il produire des suppléments ?",
+          "regles": [
+            "RM-CHAMBREPART-1"
+          ]
+        }
+      ],
+      "tests": {
+        "verdict": "ecartExplique",
+        "unitaires": {
+          "total": 2,
+          "ok": 2
+        },
+        "integration": {
+          "total": 4,
+          "identique": 2,
+          "ecartExplique": 1,
+          "nonComparable": 1
+        },
+        "liste": [
+          {
+            "id": "U-01",
+            "nature": "unitaire",
+            "libelle": "Tarif de la chambre occupée",
+            "verdict": "ok"
+          },
+          {
+            "id": "U-02",
+            "nature": "unitaire",
+            "libelle": "Dernier jour facturé, sortie à 11 h",
+            "verdict": "ok"
+          },
+          {
+            "id": "dossier-25-962",
+            "nature": "integration",
+            "libelle": "Deux chambres, sortie à 11 h",
+            "verdict": "identique"
+          },
+          {
+            "id": "dossier-25-743",
+            "nature": "integration",
+            "libelle": "Une chambre, sortie à 11 h",
+            "verdict": "identique"
+          },
+          {
+            "id": "dossier-26-90",
+            "nature": "integration",
+            "libelle": "Une chambre, sortie à 18 h",
+            "verdict": "ecartExplique",
+            "explication": "La recette facture huit suppléments, le code extrait sept : la recette compte le jour de sortie à partir de 14 h."
+          },
+          {
+            "id": "dossier-26-101",
+            "nature": "integration",
+            "libelle": "Séjour sans date de sortie",
+            "verdict": "nonComparable",
+            "explication": "L'attendu de la recette n'est pas fiable : douze lignes sans date de fin ni quantité."
+          }
+        ]
+      }
+    },
+    {
+      "id": "F07.1.b",
+      "mere": "F07.1",
+      "titre": "Répartition entre les payeurs",
+      "page": 27,
+      "reperage": {
+        "signature": "w_sejour.ue_repartition_payeurs",
+        "delimitation": "aucune"
+      },
+      "extraction": "notExtracted"
+    },
+    {
+      "id": "F09.1",
+      "titre": "Calcul des GHS",
+      "page": 49,
+      "infix": "GHS",
+      "reperage": {
+        "signature": "w_sejour.ue_calcule_ghs",
+        "correspondance": {
+          "statut": "cli",
+          "confiance": "moyenne"
+        },
+        "delimitation": "retenue",
+        "ordre": {
+          "rang": 2,
+          "statut": "ordonnee",
+          "extractible": false,
+          "manquantes": [
+            "F12.1"
+          ]
+        }
+      },
+      "extraction": "extractedSansDependances",
+      "decoupage": {
+        "gardees": 4,
+        "coupees": 0,
+        "couvertes": 3,
+        "techniques": 1,
+        "sansTest": 0
+      },
+      "regles": [
+        {
+          "id": "RM-GHS-1",
+          "enonce": "Le tarif du GHS est multiplié par le coefficient de l'établissement en vigueur à la date de sortie.",
+          "code": [
+            {
+              "regle": "G-GHS-1",
+              "fonction": "u_calcul_ghs.uf_calcule",
+              "debut": 322,
+              "fin": 380
+            },
+            {
+              "regle": "G-GHS-2",
+              "fonction": "f_coefficient_mco.f_coefficient_mco",
+              "debut": 1,
+              "fin": 52
+            }
+          ],
+          "exemples": [
+            {
+              "titre": "Coefficient de 1,05",
+              "francais": "Pour un GHS au tarif de 2 000 € et un coefficient de 1,05 à la date de sortie, le montant facturé est de 2 100 €.",
+              "gherkin": "Scénario: Coefficient de 1,05\n  Étant donné un GHS au tarif de 2 000 €\n  Et un coefficient d'établissement de 1,05 en vigueur le 14/02/2025\n  Et une sortie le 14/02/2025\n  Quand on calcule le GHS\n  Alors le montant du GHS est de 2 100 €\n",
+              "tests": [
+                "U-01",
+                "dossier-25-311"
+              ],
+              "verdict": "conforme"
+            }
+          ]
+        },
+        {
+          "id": "RM-GHS-2",
+          "enonce": "Au-delà de la borne haute du GHS, chaque journée supplémentaire est facturée au tarif journalier du GHS.",
+          "code": [
+            {
+              "regle": "G-GHS-3",
+              "fonction": "u_calcul_ghs.ue_controle_bornes",
+              "debut": 590,
+              "fin": 633
+            }
+          ],
+          "exemples": [
+            {
+              "titre": "Trois journées au-delà de la borne haute",
+              "francais": "Pour un séjour de 15 jours et une borne haute de 12 jours, trois journées supplémentaires sont facturées, soit 450 € au tarif journalier de 150 €.",
+              "gherkin": "Scénario: Trois journées au-delà de la borne haute\n  Étant donné un GHS de borne haute 12 jours et de tarif journalier 150 €\n  Et un séjour de 15 jours\n  Quand on calcule le GHS\n  Alors 3 journées supplémentaires sont facturées, pour 450 €\n",
+              "tests": [
+                "U-02"
+              ],
+              "verdict": "echec",
+              "explication": "Le code extrait facture deux journées au lieu de trois."
+            }
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "id": "Q-GHS-1",
+          "texte": "La borne haute se compte-t-elle en journées ou en nuitées ?",
+          "regles": [
+            "RM-GHS-2"
+          ]
+        }
+      ],
+      "tests": {
+        "verdict": "echec",
+        "unitaires": {
+          "total": 2,
+          "ok": 1,
+          "echec": 1
+        },
+        "integration": {
+          "total": 1,
+          "identique": 1
+        },
+        "liste": [
+          {
+            "id": "U-01",
+            "nature": "unitaire",
+            "libelle": "Coefficient en vigueur à la date de sortie",
+            "verdict": "ok"
+          },
+          {
+            "id": "U-02",
+            "nature": "unitaire",
+            "libelle": "Trois journées au-delà de la borne haute",
+            "verdict": "echec",
+            "explication": "Attendu : 3 journées supplémentaires ; obtenu : 2."
+          },
+          {
+            "id": "dossier-25-311",
+            "nature": "integration",
+            "libelle": "Chirurgie, coefficient de 1,05",
+            "verdict": "identique"
+          }
+        ]
+      }
+    },
+    {
+      "id": "F12.1",
+      "titre": "Prise en charge par la mutuelle",
+      "page": 44,
+      "reperage": {
+        "signature": "uo_mutuelle.uf_prise_en_charge",
+        "correspondance": {
+          "statut": "cli",
+          "confiance": "haute"
+        },
+        "delimitation": "retenue",
+        "ordre": {
+          "rang": 1,
+          "statut": "ordonnee",
+          "extractible": true
+        }
+      },
+      "extraction": "notExtracted"
+    },
+    {
+      "id": "F15.1",
+      "titre": "Édition du bordereau de facturation",
+      "page": 61,
+      "reperage": {
+        "signature": "w_bordereau.ue_editer",
+        "correspondance": {
+          "statut": "repli",
+          "confiance": "basse"
+        },
+        "delimitation": "aucune",
+        "ordre": {
+          "statut": "signalee",
+          "extractible": false,
+          "causes": [
+            "F15.1"
+          ]
+        }
+      },
+      "extraction": "notExtracted"
+    }
+  ],
+  "dependances": {
+    "socle": [
+      {
+        "objet": "f_date_vide",
+        "origine": "fanIn",
+        "fonctionnalites": [
+          "F03.1",
+          "F07.1"
+        ]
+      },
+      {
+        "objet": "f_lit_parametre",
+        "origine": "fanIn",
+        "fonctionnalites": [
+          "F03.1",
+          "F07.1",
+          "F09.1",
+          "F12.1"
+        ]
+      },
+      {
+        "objet": "f_arrondi",
+        "origine": "fanIn",
+        "fonctionnalites": [
+          "F07.1",
+          "F09.1",
+          "F12.1"
+        ]
+      },
+      {
+        "objet": "f_tarif_produit",
+        "origine": "jugement",
+        "fonctionnalites": [
+          "F03.1",
+          "F07.1"
+        ]
+      }
+    ],
+    "aretes": [
+      {
+        "source": "F07.1",
+        "cible": "F09.1",
+        "objet": "u_calcul_ghs",
+        "origine": "jugement",
+        "etat": "candidate",
+        "confiance": 95
+      },
+      {
+        "source": "F07.1",
+        "cible": "F12.1",
+        "objet": "uo_mutuelle",
+        "origine": "signatureMere",
+        "etat": "candidate",
+        "confiance": "haute"
+      },
+      {
+        "source": "F09.1",
+        "cible": "F12.1",
+        "objet": "uo_mutuelle",
+        "origine": "signatureMere",
+        "etat": "retenue",
+        "confiance": "haute"
+      }
+    ]
+  },
+  "saisies": {
+    "regles": {
+      "RM-FORFAITJOUR-1": {
+        "avis": "validee",
+        "auteur": "DURAND Claire",
+        "date": "2026-11-14"
+      },
+      "RM-FORFAITJOUR-2": {
+        "avis": "validee",
+        "auteur": "DURAND Claire",
+        "date": "2026-11-14"
+      },
+      "RM-CHAMBREPART-1": {
+        "avis": "validee",
+        "auteur": "DURAND Claire",
+        "date": "2026-11-14"
+      },
+      "RM-CHAMBREPART-2": {
+        "avis": "aRevoir",
+        "commentaire": "Depuis la version d'août 2026, le jour de sortie se facture quand le patient sort à 14 h ou après.",
+        "auteur": "DURAND Claire",
+        "date": "2026-11-14"
+      }
+    },
+    "questions": {
+      "Q-CHAMBREPART-1": {
+        "reponse": "Oui, depuis la version d'août 2026.",
+        "auteur": "DURAND Claire",
+        "date": "2026-11-14"
+      }
+    }
+  }
+}

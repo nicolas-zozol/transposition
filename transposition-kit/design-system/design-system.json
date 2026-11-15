@@ -1,0 +1,37 @@
+{
+  "v": 3,
+  "assetGroups": {},
+  "blobs": {},
+  "createdOnFiles": {
+    "at": "2026-11-13T15:00:16Z",
+    "v": 1
+  },
+  "docs": {
+    "sections": []
+  },
+  "groups": [],
+  "lastChange": {
+    "at": "2026-11-13T15:00:16Z",
+    "by": "Nicolas",
+    "note": "Création du système à partir de quatre captures d'écran",
+    "via": "Claude"
+  },
+  "layout": "files",
+  "libraries": [
+    {
+      "file": "components/lib/react.production.min.js",
+      "global": "React",
+      "name": "react",
+      "version": "18.3.1"
+    },
+    {
+      "file": "components/lib/react-dom.production.min.js",
+      "global": "ReactDOM",
+      "name": "react-dom",
+      "version": "18.3.1"
+    }
+  ],
+  "namespace": "BLDemo",
+  "sections": {},
+  "title": "BL Demo"
+}

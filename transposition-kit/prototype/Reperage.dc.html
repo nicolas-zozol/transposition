@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Onglet Repérage</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/bldemo/tokens.css">
+<link rel="stylesheet" href="ds/bldemo/components/bundle.css">
+<script src="ds/bldemo/components/bundle.js"></script>
+<script src="transposition-exemple.js"></script>
+<script src="transposition-volumes.js"></script>
+<script src="transposition.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div data-theme="{{theme}}" style="--mono: var(--tp-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace); display: flex; flex-direction: column; gap: var(--space-4); padding: {{marge}}; color: var(--foreground); font: 400 14px/20px var(--font-sans)">
+
+<h2 style="margin: 0; color: var(--foreground); font: 600 18px/26px var(--font-display); text-wrap: balance">Cette partie du code est-elle grosse, où s'arrête-t-elle, que lance-t-elle ?</h2>
+
+<x-import component-from-global-scope="BLDemo.Card">
+<div style="display: flex; flex-direction: column; gap: var(--space-5)">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3)">
+<div style="flex: 1 1 360px; max-width: 520px; min-width: 0">
+<x-import component-from-global-scope="BLDemo.Select" pill="{{vrai}}" options="{{optionsArbres}}" value="{{fonctionnaliteId}}" on-change="{{surChoixArbre}}" aria-label="Arbre affiché" dc-props="{{propsPlein}}"></x-import>
+</div>
+<div style="position: relative; flex: 1 1 340px; max-width: 420px; min-width: 0">
+<x-import component-from-global-scope="BLDemo.Input" icon="search" value="{{recherche}}" on-change="{{surRecherche}}" on-focus="{{surFocusRecherche}}" on-key-down="{{surToucheRecherche}}" placeholder="Rechercher une fonction dans tous les arbres…" aria-label="Rechercher une fonction dans tous les arbres"></x-import>
+<sc-if value="{{resultatsOuverts}}">
+<button type="button" aria-label="Fermer les résultats" onClick="{{fermerRecherche}}" style="all: unset; position: fixed; inset: 0; z-index: 40; cursor: default"></button>
+<div role="group" aria-label="Résultats de la recherche" style="position: absolute; top: calc(100% + 6px); left: 0; z-index: 50; box-sizing: border-box; width: 600px; max-width: 86vw; max-height: 440px; overflow: auto; padding-bottom: 8px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--popover); color: var(--popover-foreground); box-shadow: var(--shadow-md)">
+<div style="display: flex; align-items: center; gap: 12px; padding: 8px 8px 8px 16px; border-bottom: 1px solid var(--border)">
+<span style="flex: 1 1 0; color: var(--muted-foreground); font: 500 13px/18px var(--font-sans)">{{resumeResultats}}</span>
+<x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" icon="x" aria-label="Fermer les résultats" on-click="{{fermerRecherche}}"></x-import>
+</div>
+<sc-for list="{{groupes}}" as="g" hint-placeholder-count="2">
+<div style="display: flex; align-items: baseline; gap: 8px; padding: 12px 16px 4px"><span style="color: var(--muted-foreground); font: 500 12px/16px var(--mono)">{{g.id}}</span><span style="flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 13px/18px var(--font-sans)">{{g.titre}}</span><span style="color: var(--muted-foreground); font: 400 12px/16px var(--font-sans)">{{g.compte}}</span></div>
+<sc-for list="{{g.items}}" as="r">
+<button type="button" onClick="{{r.choisir}}" style="all: unset; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; width: 100%; min-height: 36px; padding: 4px 16px; cursor: pointer" style-hover="background: var(--accent)" style-focus-visible="box-shadow: inset 0 0 0 2px var(--ring)">
+<span style="flex: 1 1 160px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted-foreground); font: 400 13px/18px var(--mono)"><span>{{r.prefixe}}</span><span style="color: var(--foreground); font-weight: 600">{{r.nom}}</span></span>
+<sc-for list="{{r.marques}}" as="q"><x-import component-from-global-scope="BLDemo.Badge" tone="{{q.ton}}" icon="{{q.icone}}" variant="{{q.variante}}">{{q.texte}}</x-import></sc-for>
+<span style="flex: none; color: var(--muted-foreground); font: 400 12px/16px var(--font-sans)">{{r.contexte}}</span>
+</button>
+</sc-for>
+</sc-for>
+<sc-if value="{{aucunResultat}}">
+<p style="margin: 0; padding: 20px 16px 12px; color: var(--muted-foreground)">Aucune fonction ne contient « {{recherche}} ». Vérifiez l'orthographe ou cherchez un nom d'objet.</p>
+</sc-if>
+</div>
+</sc-if>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto">
+<sc-for list="{{badges}}" as="q"><x-import component-from-global-scope="BLDemo.Badge" tone="{{q.ton}}" icon="{{q.icone}}" variant="{{q.variante}}">{{q.texte}}</x-import></sc-for>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-8)">
+<sc-for list="{{stats}}" as="s" hint-placeholder-count="7"><x-import component-from-global-scope="BLDemo.Stat" layout="stacked" value="{{s.valeur}}" label="{{s.libelle}}"></x-import></sc-for>
+</div>
+</div>
+</x-import>
+
+<sc-if value="{{aArbre}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4)">
+
+<div style="flex: 999 1 520px; min-width: 0">
+<x-import component-from-global-scope="BLDemo.Card" flush="{{vrai}}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 14px 12px 14px 20px; border-bottom: 1px solid var(--border)">
+<div style="flex: 1 1 240px; min-width: 0; display: grid; gap: 2px">
+<h3 style="margin: 0; color: var(--foreground); font: 600 15px/22px var(--font-display)">Arbre d'appels</h3>
+<p style="margin: 0; overflow-wrap: anywhere; color: var(--muted-foreground); font: 400 12px/18px var(--mono)">{{signature}}</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 4px">
+<x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" on-click="{{toutDeplier}}">Tout déplier</x-import>
+<x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" on-click="{{toutReplier}}">Tout replier</x-import>
+<x-import component-from-global-scope="BLDemo.Button" variant="outline" size="sm" icon="{{icCarte}}" on-click="{{allerCarte}}">Voir la carte</x-import>
+</div>
+</div>
+<dc-import name="ArbreAppels" lignes="{{lignes}}" hint-size="100%,360px"></dc-import>
+</x-import>
+</div>
+
+<sc-if value="{{aFiche}}" hint-placeholder-val="{{true}}">
+<div style="flex: 1 1 340px; max-width: 480px; min-width: 300px; position: sticky; top: 0; max-height: calc(100vh - 96px); overflow-y: auto; border-radius: var(--radius-xl)">
+<x-import component-from-global-scope="BLDemo.Card">
+<div style="display: flex; flex-direction: column; gap: var(--space-4)">
+
+<div style="display: grid; gap: 8px">
+<h3 style="margin: 0; color: var(--foreground); font: 600 15px/22px var(--font-display)">Fiche de la fonction</h3>
+<p style="margin: 0; overflow-wrap: anywhere; color: var(--foreground); font: 600 13px/20px var(--mono)">{{fiche.id}}</p>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<x-import component-from-global-scope="BLDemo.Badge" tone="neutral" variant="outline" icon="file-text">{{fiche.nature}}</x-import>
+<sc-for list="{{fiche.marques}}" as="q"><x-import component-from-global-scope="BLDemo.Badge" tone="{{q.ton}}" icon="{{q.icone}}" variant="{{q.variante}}">{{q.texte}}</x-import></sc-for>
+</div>
+</div>
+
+<sc-if value="{{fiche.aSignature}}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 12px; border-radius: var(--radius-md); background: var(--secondary); color: var(--secondary-foreground); font: 500 13px/18px var(--font-sans)">
+<span style="flex: 1 1 160px">{{fiche.signatureTexte}}</span>
+<sc-if value="{{fiche.signatureAilleurs}}"><x-import component-from-global-scope="BLDemo.Button" variant="outline" size="sm" icon-right="chevron-right" on-click="{{fiche.ouvrirSignature}}">{{fiche.signatureBouton}}</x-import></sc-if>
+</div>
+</sc-if>
+
+<dl style="display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 8px 12px; margin: 0">
+<dt style="grid-column: 1 / -1; color: var(--muted-foreground); font: 500 13px/18px var(--font-sans)">Fichier</dt>
+<dd style="grid-column: 1 / -1; margin: -6px 0 0; overflow-wrap: anywhere; font: 400 12px/18px var(--mono)">{{fiche.fichier}}</dd>
+<dt style="color: var(--muted-foreground); font: 500 13px/18px var(--font-sans)">Emplacement</dt>
+<dd style="margin: 0; font: 400 13px/18px var(--font-sans)">{{fiche.emplacement}}</dd>
+<dt style="color: var(--muted-foreground); font: 500 13px/18px var(--font-sans)">DataWindows</dt>
+<dd style="margin: 0; display: flex; flex-wrap: wrap; gap: 4px 6px; font: 400 13px/18px var(--font-sans)">
+<sc-for list="{{fiche.datawindows}}" as="dw"><span style="padding: 0 6px; border-radius: var(--radius-sm); background: var(--muted); font: 400 12px/18px var(--mono)">{{dw}}</span></sc-for>
+<sc-if value="{{fiche.sansDatawindows}}"><span style="color: var(--muted-foreground)">—</span></sc-if>
+</dd>
+<dt style="color: var(--muted-foreground); font: 500 13px/18px var(--font-sans)">Appels non résolus</dt>
+<dd style="margin: 0; font: 400 13px/18px var(--font-sans); font-variant-numeric: tabular-nums">{{fiche.nonResolus}}</dd>
+<dt style="color: var(--muted-foreground); font: 500 13px/18px var(--font-sans)">Taille du sous-arbre</dt>
+<dd style="margin: 0; font: 400 13px/18px var(--font-sans)">
+<sc-if value="{{fiche.aTaille}}"><span style="display: flex; flex-wrap: wrap; gap: 2px 12px"><sc-for list="{{fiche.tailles}}" as="tl"><span style="white-space: nowrap">{{tl}}</span></sc-for></span></sc-if>
+<sc-if value="{{fiche.sansTaille}}"><span style="color: var(--muted-foreground)">{{fiche.tailleVide}}</span></sc-if>
+</dd>
+</dl>
+
+<sc-if value="{{fiche.aArret}}">
+<section style="display: grid; gap: 8px; padding-top: var(--space-4); border-top: 1px solid var(--border)">
+<h4 style="margin: 0; font: 600 13px/18px var(--font-sans)">Arrêt sur <span style="font-family: var(--mono)">{{fiche.arret.objet}}</span></h4>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px">
+<x-import component-from-global-scope="BLDemo.Badge" tone="{{fiche.arret.classe.ton}}" icon="{{fiche.arret.classe.icone}}">{{fiche.arret.classe.texte}}</x-import>
+<x-import component-from-global-scope="BLDemo.Badge" tone="{{fiche.arret.etat.ton}}" icon="{{fiche.arret.etat.icone}}">{{fiche.arret.etat.texte}}</x-import>
+<span style="color: var(--muted-foreground); font: 400 13px/18px var(--font-sans)">{{fiche.arret.confiance}}</span>
+</div>
+<p style="margin: 0; text-wrap: pretty">{{fiche.arret.raison}}</p>
+<sc-if value="{{fiche.arret.aVisees}}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px">
+<span style="color: var(--muted-foreground); font: 500 13px/18px var(--font-sans)">Fonctionnalité visée</span>
+<sc-for list="{{fiche.arret.visees}}" as="x"><x-import component-from-global-scope="BLDemo.Button" variant="outline" size="sm" icon-right="chevron-right" on-click="{{x.ouvrir}}">{{x.id}} {{x.titre}}</x-import></sc-for>
+</div>
+</sc-if>
+</section>
+</sc-if>
+
+<sc-if value="{{fiche.aDiffere}}">
+<section style="display: grid; gap: 6px; padding-top: var(--space-4); border-top: 1px solid var(--border)">
+<h4 style="margin: 0; font: 600 13px/18px var(--font-sans)">Lancée en différé</h4>
+<sc-for list="{{fiche.differes}}" as="x">
+<button type="button" onClick="{{x.aller}}" style="all: unset; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; width: calc(100% + 16px); min-height: 32px; margin: 0 -8px; padding: 4px 8px; border-radius: var(--radius-md); cursor: pointer" style-hover="background: var(--accent)" style-focus-visible="box-shadow: var(--focus-ring)">
+<span style="display: inline-flex; color: var(--info)"><x-import component-from-global-scope="BLDemo.Icon" name="clock" size="{{14}}"></x-import></span>
+<span style="color: var(--muted-foreground); font: 400 13px/18px var(--font-sans)">par</span>
+<span style="flex: 1 1 120px; min-width: 0; overflow-wrap: anywhere; font: 600 13px/18px var(--mono)">{{x.fonction}}</span>
+<span style="flex: none; color: var(--muted-foreground); font: 400 12px/16px var(--font-sans); font-variant-numeric: tabular-nums">{{x.ligne}}</span>
+<sc-if value="{{x.lieu}}"><span style="flex: 1 1 100%; color: var(--muted-foreground); font: 400 12px/16px var(--font-sans)">{{x.lieu}}</span></sc-if>
+</button>
+</sc-for>
+</section>
+</sc-if>
+
+<section style="display: grid; gap: 2px; padding-top: var(--space-4); border-top: 1px solid var(--border)">
+<h4 style="margin: 0 0 4px; font: 600 13px/18px var(--font-sans)">{{fiche.nbAppeleePar}}</h4>
+<sc-if value="{{fiche.sansAppeleePar}}"><p style="margin: 0; color: var(--muted-foreground); font: 400 13px/18px var(--font-sans)">{{fiche.appeleeParVide}}</p></sc-if>
+<sc-for list="{{fiche.appeleePar}}" as="x">
+<button type="button" onClick="{{x.aller}}" title="{{x.id}}" style="all: unset; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; width: calc(100% + 16px); min-height: 32px; margin: 0 -8px; padding: 4px 8px; border-radius: var(--radius-md); cursor: pointer" style-hover="background: var(--accent)" style-focus-visible="box-shadow: var(--focus-ring)">
+<span style="flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted-foreground); font: 400 13px/18px var(--mono)"><span>{{x.prefixe}}</span><span style="color: var(--foreground); font-weight: 600">{{x.nom}}</span></span>
+<span style="flex: none; color: var(--muted-foreground); font: 400 12px/16px var(--font-sans); font-variant-numeric: tabular-nums">{{x.ligne}}</span>
+<sc-if value="{{x.aMarques}}"><span style="flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 4px 6px; padding-bottom: 2px"><sc-for list="{{x.marques}}" as="q"><x-import component-from-global-scope="BLDemo.Badge" tone="{{q.ton}}" icon="{{q.icone}}" variant="{{q.variante}}">{{q.texte}}</x-import></sc-for></span></sc-if>
+</button>
+</sc-for>
+<sc-if value="{{fiche.plusAppeleePar.a}}"><div style="padding-top: 4px"><x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" icon-right="{{fiche.plusAppeleePar.icone}}" on-click="{{fiche.plusAppeleePar.basculer}}">{{fiche.plusAppeleePar.texte}}</x-import></div></sc-if>
+</section>
+
+<section style="display: grid; gap: 2px; padding-top: var(--space-4); border-top: 1px solid var(--border)">
+<h4 style="margin: 0 0 4px; font: 600 13px/18px var(--font-sans)">{{fiche.nbAppelle}}</h4>
+<sc-if value="{{fiche.sansAppelle}}"><p style="margin: 0; color: var(--muted-foreground); font: 400 13px/18px var(--font-sans)">{{fiche.appelleVide}}</p></sc-if>
+<sc-for list="{{fiche.appelle}}" as="x">
+<button type="button" onClick="{{x.aller}}" title="{{x.id}}" style="all: unset; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; width: calc(100% + 16px); min-height: 32px; margin: 0 -8px; padding: 4px 8px; border-radius: var(--radius-md); cursor: pointer" style-hover="background: var(--accent)" style-focus-visible="box-shadow: var(--focus-ring)">
+<span style="flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted-foreground); font: 400 13px/18px var(--mono)"><span>{{x.prefixe}}</span><span style="color: var(--foreground); font-weight: 600">{{x.nom}}</span></span>
+<span style="flex: none; color: var(--muted-foreground); font: 400 12px/16px var(--font-sans); font-variant-numeric: tabular-nums">{{x.ligne}}</span>
+<sc-if value="{{x.aMarques}}"><span style="flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 4px 6px; padding-bottom: 2px"><sc-for list="{{x.marques}}" as="q"><x-import component-from-global-scope="BLDemo.Badge" tone="{{q.ton}}" icon="{{q.icone}}" variant="{{q.variante}}">{{q.texte}}</x-import></sc-for></span></sc-if>
+</button>
+</sc-for>
+<sc-if value="{{fiche.plusAppelle.a}}"><div style="padding-top: 4px"><x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" icon-right="{{fiche.plusAppelle.icone}}" on-click="{{fiche.plusAppelle.basculer}}">{{fiche.plusAppelle.texte}}</x-import></div></sc-if>
+</section>
+
+<sc-if value="{{fiche.aAilleurs}}">
+<section style="display: grid; gap: 8px; padding-top: var(--space-4); border-top: 1px solid var(--border)">
+<h4 style="margin: 0; font: 600 13px/18px var(--font-sans)">Présente aussi dans</h4>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{fiche.ailleurs}}" as="x"><x-import component-from-global-scope="BLDemo.Button" variant="outline" size="sm" title="{{x.titre}}" on-click="{{x.ouvrir}}">{{x.id}}</x-import></sc-for>
+</div>
+</section>
+</sc-if>
+
+</div>
+</x-import>
+</div>
+</sc-if>
+
+</div>
+</sc-if>
+
+<sc-if value="{{sansArbre}}">
+<x-import component-from-global-scope="BLDemo.Card">
+<div style="display: grid; justify-items: start; gap: 12px; max-width: 640px; padding: var(--space-5) 0">
+<span style="display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--muted); color: var(--muted-foreground)"><x-import component-from-global-scope="BLDemo.Icon" name="network" size="{{20}}"></x-import></span>
+<h3 style="margin: 0; color: var(--foreground); font: 600 18px/26px var(--font-display)">{{vide.titre}}</h3>
+<p style="margin: 0; text-wrap: pretty">{{vide.texte}}</p>
+<sc-if value="{{vide.aSignature}}"><p style="margin: 0; color: var(--muted-foreground); font: 400 13px/18px var(--font-sans)">Signature mère : <span style="color: var(--foreground); font: 400 12px/18px var(--mono)">{{vide.signature}}</span></p></sc-if>
+<sc-if value="{{vide.ordre}}"><x-import component-from-global-scope="BLDemo.Button" variant="outline" icon-right="chevron-right" on-click="{{vide.allerDependances}}">Voir dans Dépendances</x-import></sc-if>
+</div>
+</x-import>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"magasin":{"editor":null},"fonctionnalite":{"editor":"text","default":"F07.1"},"fonction":{"editor":null},"recherche":{"editor":null},"jeu":{"editor":"enum","options":["exemple","depart","intermediaire"],"default":"exemple"},"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1152,"height":1240}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.lien = window.Transposition.attacher(this, 'reperage');
+  }
+  componentDidMount() { this.lien.monter(); }
+  componentWillUnmount() { this.lien.demonter(); }
+  renderVals() {
+    var v = this.lien.vue();
+    v.vrai = true;
+    return v;
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Carte des appels</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/bldemo/tokens.css">
+<link rel="stylesheet" href="ds/bldemo/components/bundle.css">
+<script src="ds/bldemo/components/bundle.js"></script>
+<script src="transposition-exemple.js"></script>
+<script src="transposition-volumes.js"></script>
+<script src="transposition.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div data-theme="{{theme}}" style="padding: {{marge}}; --mono: var(--tp-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace)">
+<div ref="{{refCorps}}" style="display: flex; flex-direction: column; min-width: 0; overflow: hidden; border: {{bordure}}; border-radius: {{rayon}}; background: var(--card); color: var(--foreground); font-family: var(--font-sans)">
+<sc-if value="{{aCarte}}" hint-placeholder-val="{{true}}">
+
+<sc-if value="{{avecBarre}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; min-height: 44px; box-sizing: border-box; padding: 4px 12px 4px 20px; border-bottom: 1px solid var(--border)">
+<span role="status" style="flex: 1 1 200px; color: var(--muted-foreground); font: 400 13px/18px var(--font-sans); font-variant-numeric: tabular-nums">{{resume}}</span>
+<sc-if value="{{reglages.aRenvois}}">
+<x-import component-from-global-scope="BLDemo.Switch" checked="{{reglages.renvoisActifs}}" on-change="{{reglages.surRenvois}}">{{reglages.libelleRenvois}}</x-import>
+</sc-if>
+<span role="group" aria-label="Niveaux affichés" style="display: inline-flex; align-items: center; gap: 2px">
+<span aria-hidden="true" style="padding-right: 4px; color: var(--muted-foreground); font: 400 13px/18px var(--font-sans)">Niveaux</span>
+<x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" icon="chevrons-left" aria-label="Replier d'un niveau" title="Replier d'un niveau" disabled="{{reglages.sansMoins}}" on-click="{{reglages.moins}}"></x-import>
+<span title="{{reglages.libelleNiveau}}" style="min-width: 20px; color: var(--foreground); font: 600 13px/18px var(--font-sans); font-variant-numeric: tabular-nums; text-align: center"><span aria-hidden="true">{{reglages.niveau}}</span><span class="bl-sr">{{reglages.libelleNiveau}}</span></span>
+<x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" icon="chevrons-right" aria-label="Déplier d'un niveau" title="Déplier d'un niveau" disabled="{{reglages.sansPlus}}" on-click="{{reglages.plus}}"></x-import>
+</span>
+<span style="display: inline-flex; align-items: center; gap: 2px">
+<x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" disabled="{{reglages.toutDeplie}}" on-click="{{reglages.toutDeplier}}">Tout déplier</x-import>
+<x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" disabled="{{reglages.parDefaut}}" on-click="{{reglages.revenir}}">{{reglages.libelleRevenir}}</x-import>
+</span>
+<span role="group" aria-label="Zoom de la carte" style="display: inline-flex; align-items: center; gap: 2px; margin-left: auto">
+<x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" icon="minus" aria-label="Zoom arrière" title="Zoom arrière" disabled="{{zoom.sansMoins}}" on-click="{{zoom.moins}}"></x-import>
+<x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" aria-label="{{zoom.libelleCent}}" title="Revenir à 100 %" on-click="{{zoom.cent}}" dc-props="{{propsPourcent}}">{{zoom.texte}}</x-import>
+<x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" icon="plus" aria-label="Zoom avant" title="Zoom avant" disabled="{{zoom.sansPlus}}" on-click="{{zoom.plus}}"></x-import>
+<x-import component-from-global-scope="BLDemo.Button" variant="outline" size="sm" aria-pressed="{{zoom.ajuste}}" title="Faire tenir toute la carte dans la zone" on-click="{{zoom.ajuster}}">Ajuster</x-import>
+</span>
+</div>
+</sc-if>
+
+<div style="position: relative; background: var(--background)">
+<div ref="{{refZone}}" role="group" aria-label="{{libelleZone}}" style="position: relative; overflow: auto; height: {{c.hauteurZone}}px; max-height: {{c.plafond}}; cursor: {{curseur}}; user-select: none; -webkit-user-select: none">
+<div style="position: relative; width: {{c.lw}}px; height: {{c.lh}}px; margin: {{c.marge}}">
+<div style="position: absolute; left: 0; top: 0; width: {{c.largeur}}px; height: {{c.hauteur}}px; transform: scale({{c.echelle}}); transform-origin: 0 0">
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; pointer-events: none">{{dessin}}</div>
+<sc-for list="{{c.noeuds}}" as="n" hint-placeholder-count="6">
+<div role="group" aria-label="{{n.libelle}}" style="position: absolute; box-sizing: border-box; display: flex; align-items: center; gap: 2px; padding-right: 6px; border-radius: var(--radius-lg); {{n.cadre}}">
+<sc-if value="{{n.differe}}"><span title="Appel en différé" style="position: absolute; left: -31px; top: 50%; display: grid; place-items: center; width: 20px; height: 20px; margin-top: -10px; border-radius: 50%; background: var(--info-soft); color: var(--info); box-shadow: 0 0 0 2px var(--background)"><x-import component-from-global-scope="BLDemo.Icon" name="clock" size="{{13}}"></x-import></span></sc-if>
+<button type="button" onClick="{{n.choisir}}" onDoubleClick="{{n.doubleClic}}" aria-pressed="{{n.selectionnee}}" title="{{n.id}}" style="all: unset; box-sizing: border-box; flex: 1 1 0; min-width: 0; align-self: stretch; display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 0 4px 0 12px; border-radius: inherit; cursor: pointer" style-focus-visible="box-shadow: var(--focus-ring)">
+<span style="display: flex; min-width: 0; color: var(--muted-foreground); font: 400 13px/18px var(--mono); white-space: nowrap"><span style="flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis">{{n.prefixe}}</span><span style="flex: 0 0 auto; max-width: 100%; overflow: hidden; text-overflow: ellipsis; color: var(--foreground); font-weight: 600">{{n.nom}}</span></span>
+<span style="display: flex; align-items: center; gap: 6px; min-width: 0; height: 24px; overflow: hidden; white-space: nowrap"><sc-for list="{{n.marques}}" as="q"><x-import component-from-global-scope="BLDemo.Badge" tone="{{q.ton}}" icon="{{q.icone}}" variant="{{q.variante}}">{{q.texte}}</x-import></sc-for><span style="flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--muted-foreground); font: 400 12px/16px var(--font-sans); font-variant-numeric: tabular-nums">{{n.detail}}</span></span>
+</button>
+<sc-if value="{{n.aBascule}}">
+<button type="button" onClick="{{n.basculer}}" aria-expanded="{{n.ouverte}}" aria-label="{{n.basculeLabel}}" title="{{n.basculeLabel}}" style="all: unset; box-sizing: border-box; flex: none; display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; border: 1px solid; border-radius: var(--radius-full); font: 600 12px/16px var(--font-sans); font-variant-numeric: tabular-nums; cursor: pointer; {{n.pastille}}" style-hover="background: var(--accent); color: var(--accent-foreground)" style-focus-visible="box-shadow: var(--focus-ring)"><sc-if value="{{n.compte}}"><span>{{n.compte}}</span></sc-if><x-import component-from-global-scope="BLDemo.Icon" name="{{n.chevron}}" size="{{14}}"></x-import></button>
+</sc-if>
+<sc-if value="{{n.aCompteFixe}}">
+<span title="{{n.compteTitre}}" style="flex: none; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; border: 1px solid; border-radius: var(--radius-full); font: 600 12px/16px var(--font-sans); font-variant-numeric: tabular-nums; {{n.pastille}}"><span aria-hidden="true">{{n.compte}}</span><span class="bl-sr">{{n.compteTitre}}</span></span>
+</sc-if>
+<sc-if value="{{n.suivre}}">
+<button type="button" onClick="{{n.suivre}}" aria-label="{{n.suivreLabel}}" title="{{n.suivreLabel}}" style="all: unset; box-sizing: border-box; flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: var(--radius-full); color: var(--foreground); cursor: pointer" style-hover="background: var(--accent); color: var(--accent-foreground)" style-focus-visible="box-shadow: var(--focus-ring)"><x-import component-from-global-scope="BLDemo.Icon" name="arrow-right" size="{{14}}"></x-import></button>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+<sc-if value="{{avecMini}}">
+<div ref="{{refMini}}" aria-hidden="true" style="position: absolute; right: 20px; bottom: 20px; padding: 6px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--card); box-shadow: var(--shadow-sm); cursor: pointer; touch-action: none">
+<div style="position: relative; width: {{c.mini.largeur}}px; height: {{c.mini.hauteur}}px; overflow: hidden">{{mini}}<div ref="{{refCadre}}" style="position: absolute; left: 0; top: 0; width: 0; height: 0; box-sizing: border-box; border: 1.5px solid var(--primary); border-radius: 2px; background: color-mix(in oklab, var(--primary) 14%, transparent); pointer-events: none"></div></div>
+</div>
+</sc-if>
+</div>
+
+</sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"magasin":{"editor":null},"nu":{"editor":null},"plafond":{"editor":null},"fonctionnalite":{"editor":"text","default":"F07.1"},"fonction":{"editor":null},"occurrence":{"editor":null},"deplier":{"editor":null},"renvois":{"editor":"enum","options":["non","oui"],"default":"non"},"zoom":{"editor":null},"jeu":{"editor":"enum","options":["exemple","depart","intermediaire"],"default":"exemple"},"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":1200,"height":580}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var moi = this;
+    this.state = { largeur: 0, plafond: 0 };
+    this.corps = null; this.zone = null; this.mini = null; this.cadre = null;
+    this.vu = null;         // la dernière carte rendue : positions, échelle, dimensions
+    this.ancre = null;      // le nœud à garder en place quand il se déplie
+    this.ancreZoom = null;  // le point à garder en place quand l'échelle change
+    this.revele = null;     // la dernière sélection amenée à l'écran
+    this.glisse = null;
+    this.lien = window.Transposition.attacher(this, 'carteAppels');
+    this.propsPourcent = { style: { minWidth: 58, justifyContent: 'center', fontVariantNumeric: 'tabular-nums' } };
+    this.refCorps = function (el) { moi.corps = el; };
+    this.refZone = function (el) { moi.brancherZone(el); };
+    this.refMini = function (el) { moi.brancherMini(el); };
+    this.refCadre = function (el) { moi.cadre = el; moi.majCadre(); };
+    this.surTaille = function () { moi.mesurer(); };
+  }
+
+  /* La zone défile nativement. À la souris, on la fait aussi glisser en la tirant, et Ctrl + molette change l'échelle. */
+  brancherZone(el) {
+    var moi = this;
+    if (this.zone && this.ecoutes) this.ecoutes.forEach(function (x) { moi.zone.removeEventListener(x[0], x[1], x[2]); });
+    this.zone = el; this.ecoutes = null;
+    if (!el) return;
+    var debut = function (ev) {
+      if ((ev.pointerType && ev.pointerType !== 'mouse') || ev.button !== 0) return;
+      moi.glisse = { x: ev.clientX, y: ev.clientY, gauche: el.scrollLeft, haut: el.scrollTop, actif: false, id: ev.pointerId };
+    };
+    var bouge = function (ev) {
+      var g = moi.glisse;
+      if (!g) return;
+      var dx = ev.clientX - g.x, dy = ev.clientY - g.y;
+      if (!g.actif) {
+        if (Math.abs(dx) + Math.abs(dy) < 5) return;
+        g.actif = true;
+        try { el.setPointerCapture(g.id); } catch (err) { /* sans capture, le glissement s'arrête au bord */ }
+        el.style.cursor = 'grabbing';
+      }
+      var f = moi.facteur(el);
+      el.scrollLeft = g.gauche - dx / f;
+      el.scrollTop = g.haut - dy / f;
+    };
+    var fin = function () {
+      var g = moi.glisse;
+      moi.glisse = null;
+      if (!g || !g.actif) return;
+      try { el.releasePointerCapture(g.id); } catch (err) { /* déjà relâchée */ }
+      el.style.cursor = '';
+      /* Le clic qui suit un glissement ne sélectionne rien. */
+      moi.vientDeGlisser = true;
+      setTimeout(function () { moi.vientDeGlisser = false; }, 60);
+    };
+    var clic = function (ev) {
+      if (!moi.vientDeGlisser) return;
+      moi.vientDeGlisser = false;
+      ev.stopPropagation(); ev.preventDefault();
+    };
+    var molette = function (ev) {
+      if (!ev.ctrlKey && !ev.metaKey) return;
+      ev.preventDefault();
+      moi.zoomerVers(ev.deltaY < 0 ? 1 : -1, ev);
+    };
+    var defile = function () { moi.majCadre(); };
+    this.ecoutes = [['pointerdown', debut], ['pointermove', bouge], ['pointerup', fin], ['pointercancel', fin], ['click', clic, true], ['scroll', defile, { passive: true }], ['wheel', molette, { passive: false }]];
+    this.ecoutes.forEach(function (x) { el.addEventListener(x[0], x[1], x[2]); });
+  }
+
+  /* La vue d'ensemble : un clic ou un glissement y déplace la fenêtre. */
+  brancherMini(el) {
+    var moi = this;
+    if (this.mini && this.ecoutesMini) this.ecoutesMini.forEach(function (x) { moi.mini.removeEventListener(x[0], x[1]); });
+    this.mini = el; this.ecoutesMini = null;
+    if (!el) return;
+    var aller = function (ev) {
+      var z = moi.zone, v = moi.vu, dessin = el.firstElementChild;
+      if (!z || !v || !dessin) return;
+      var r = dessin.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      z.scrollLeft = ((ev.clientX - r.left) / r.width) * v.lwCarte - z.clientWidth / 2;
+      z.scrollTop = ((ev.clientY - r.top) / r.height) * v.lh - z.clientHeight / 2;
+    };
+    var debut = function (ev) {
+      if (ev.button != null && ev.button !== 0) return;
+      moi.miniActif = true;
+      try { el.setPointerCapture(ev.pointerId); } catch (err) { /* le clic simple suffit */ }
+      aller(ev);
+      ev.preventDefault();
+    };
+    var bouge = function (ev) { if (moi.miniActif) aller(ev); };
+    var fin = function () { moi.miniActif = false; };
+    this.ecoutesMini = [['pointerdown', debut], ['pointermove', bouge], ['pointerup', fin], ['pointercancel', fin]];
+    this.ecoutesMini.forEach(function (x) { el.addEventListener(x[0], x[1]); });
+  }
+
+  /* Rapport entre les pixels de l'écran et ceux de la zone, quand la carte vit dans un canevas réduit ou agrandi. */
+  facteur(el) {
+    var f = el.offsetWidth ? el.getBoundingClientRect().width / el.offsetWidth : 1;
+    return f > 0 ? f : 1;
+  }
+
+  /* La hauteur laissée à la carte : celle de la fenêtre, moins ce que la page montre au-dessus et au-dessous de la zone.
+     La fenêtre est le premier ancêtre qui défile ; à défaut, celle du navigateur. */
+  plafondMesure() {
+    var z = this.zone;
+    if (!z) return 0;
+    var c = z.parentElement;
+    while (c && c !== document.body) {
+      var oy = getComputedStyle(c).overflowY;
+      if (oy === 'auto' || oy === 'scroll') break;
+      c = c.parentElement;
+    }
+    var f = this.facteur(z), rz = z.getBoundingClientRect(), hauteur, haut, basContenu, marge = 0;
+    if (c && c !== document.body) {
+      var rc = c.getBoundingClientRect(), dernier = c.lastElementChild;
+      hauteur = c.clientHeight;
+      haut = (rz.top - rc.top) / f + c.scrollTop;
+      basContenu = dernier ? (dernier.getBoundingClientRect().bottom - rc.top) / f + c.scrollTop : haut + z.offsetHeight;
+      marge = parseFloat(getComputedStyle(c).paddingBottom) || 0;
+    } else {
+      hauteur = window.innerHeight;
+      haut = rz.top / f + window.scrollY;
+      basContenu = document.body.getBoundingClientRect().bottom / f + window.scrollY;
+    }
+    var dessous = Math.max(0, basContenu - haut - z.offsetHeight) + marge;
+    return Math.max(360, Math.floor(hauteur - haut - dessous));
+  }
+
+  mesurer() {
+    var el = this.zone || this.corps;
+    if (!el) return;
+    var w = Math.floor(el.offsetWidth), h = this.plafondMesure();
+    if (w > 0 && (Math.abs(w - this.state.largeur) > 2 || Math.abs(h - this.state.plafond) > 1)) this.setState({ largeur: w, plafond: h });
+  }
+
+  ancrerCentre() {
+    var z = this.zone, v = this.vu;
+    if (!z || !v) return;
+    this.ancreZoom = { fx: (z.scrollLeft + z.clientWidth / 2) / v.echelle, fy: (z.scrollTop + z.clientHeight / 2) / v.echelle, cx: z.clientWidth / 2, cy: z.clientHeight / 2 };
+  }
+
+  zoomerVers(sens, ev) {
+    var z = this.zone, v = this.vu;
+    if (!z || !v) return;
+    var s = v.echelle, cible = Math.max(0.1, Math.min(1.5, Math.round(s * (sens > 0 ? 1.15 : 1 / 1.15) * 100) / 100));
+    if (cible === s) return;
+    var r = z.getBoundingClientRect(), f = this.facteur(z);
+    var cx = (ev.clientX - r.left) / f, cy = (ev.clientY - r.top) / f;
+    this.ancreZoom = { fx: (z.scrollLeft + cx) / s, fy: (z.scrollTop + cy) / s, cx: cx, cy: cy };
+    this.lien.magasin.zoomerCarte(cible);
+  }
+
+  /* Amène la sélection dans la fenêtre si elle n'y est pas tout entière. À l'ouverture d'un arbre, elle se centre
+     en hauteur ; en largeur, la carte ne bouge que si la sélection est hors champ, pour garder la signature à gauche. */
+  reveler(force) {
+    var z = this.zone, v = this.vu, G = window.Transposition.CARTE;
+    var p = v && v.pos[v.selCle];
+    if (!z || !p) return;
+    var s = v.echelle, marge = 16;
+    var gauche = p.x * s, haut = p.y * s, droite = gauche + G.nw * s, bas = haut + G.nh * s;
+    var dedansX = gauche >= z.scrollLeft + marge && droite <= z.scrollLeft + z.clientWidth - marge;
+    var dedansY = haut >= z.scrollTop + marge && bas <= z.scrollTop + z.clientHeight - marge;
+    if (force || !dedansY) z.scrollTop = Math.max(0, (haut + bas) / 2 - z.clientHeight / 2);
+    if (force) z.scrollLeft = 0;
+    if (!(gauche >= z.scrollLeft + marge && droite <= z.scrollLeft + z.clientWidth - marge)) z.scrollLeft = Math.max(0, (gauche + droite) / 2 - z.clientWidth / 2);
+  }
+
+  majCadre() {
+    var z = this.zone, c = this.cadre, v = this.vu;
+    if (!z || !c || !v || !v.mini) return;
+    var k = v.mini.k / v.echelle;
+    c.style.left = Math.round(z.scrollLeft * k) + 'px';
+    c.style.top = Math.round(z.scrollTop * k) + 'px';
+    c.style.width = Math.max(4, Math.min(v.mini.largeur, Math.round(z.clientWidth * k))) + 'px';
+    c.style.height = Math.max(4, Math.min(v.mini.hauteur, Math.round(z.clientHeight * k))) + 'px';
+  }
+
+  componentDidMount() {
+    var moi = this;
+    this.lien.monter();
+    this.mesurer();
+    if (typeof ResizeObserver !== 'undefined' && this.corps) {
+      this.observateur = new ResizeObserver(function () { moi.mesurer(); });
+      this.observateur.observe(this.corps);
+    }
+    window.addEventListener('resize', this.surTaille);
+  }
+  componentDidUpdate() {
+    var z = this.zone, v = this.vu;
+    if (!z || !v) return;
+    if (this.ancreZoom) {
+      z.scrollLeft = this.ancreZoom.fx * v.echelle - this.ancreZoom.cx;
+      z.scrollTop = this.ancreZoom.fy * v.echelle - this.ancreZoom.cy;
+    } else if (this.ancre) {
+      var q = v.pos[this.ancre.cle];
+      if (q) { z.scrollLeft += (q.x - this.ancre.x) * v.echelle; z.scrollTop += (q.y - this.ancre.y) * v.echelle; }
+    } else if (this.state.largeur) {
+      var cle = v.signature + '/' + v.selCle;
+      if (cle !== this.revele) this.reveler(!this.revele || this.revele.split('/')[0] !== v.signature);
+    }
+    this.ancre = null; this.ancreZoom = null;
+    if (this.state.largeur) this.revele = v.signature + '/' + v.selCle;
+    this.majCadre();
+    /* Un en-tête ou un pied qui change de hauteur déplace la zone : la place laissée à la carte se remesure,
+       une seule fois par tour pour ne jamais boucler. */
+    if (!this.verrou) {
+      var moi = this;
+      this.verrou = true;
+      this.mesurer();
+      setTimeout(function () { moi.verrou = false; }, 0);
+    }
+  }
+  componentWillUnmount() {
+    this.lien.demonter();
+    if (this.observateur) this.observateur.disconnect();
+    window.removeEventListener('resize', this.surTaille);
+    this.brancherZone(null);
+    this.brancherMini(null);
+  }
+
+  renderVals() {
+    var moi = this, p = this.props, seul = !p.magasin, nu = !!p.nu;
+    /* plafond : une hauteur imposée, pour une planche ; sinon la place mesurée dans la page. Avant la première mesure, une estimation. */
+    var estime = Math.max(360, ((typeof window !== 'undefined' && window.innerHeight) || 900) - (seul ? 150 : 400));
+    var plafond = nu ? 0 : p.plafond != null && p.plafond !== '' ? Number(p.plafond) : this.state.plafond || estime;
+    var v = this.lien.vue({ largeur: nu ? 0 : this.state.largeur || 0, plafond: plafond });
+    this.vu = v.c;
+    if (v.c) {
+      /* Déplier ou replier garde le nœud en place à l'écran. Un double-clic sur le nœud vaut un clic sur sa pastille. */
+      v.c.noeuds.forEach(function (n) {
+        if (!n.aBascule) return;
+        var basculer = n.basculer;
+        n.basculer = function () { moi.ancre = { cle: n.cle, x: n.x, y: n.y }; basculer(); };
+        n.doubleClic = n.basculer;
+      });
+      ['moins', 'plus', 'cent', 'ajuster'].forEach(function (k) {
+        var f = v.zoom[k];
+        v.zoom[k] = function () { moi.ancrerCentre(); f(); };
+      });
+    }
+    v.refCorps = this.refCorps; v.refZone = this.refZone; v.refMini = this.refMini; v.refCadre = this.refCadre;
+    v.propsPourcent = this.propsPourcent;
+    v.avecBarre = !nu;
+    v.avecMini = !nu && !!(v.c && v.c.aMini);
+    v.curseur = v.c && v.c.aMini ? 'grab' : 'default';
+    v.libelleZone = v.c ? 'Carte des appels de ' + v.c.signature : 'Carte des appels';
+    v.marge = seul ? 'var(--space-6)' : '0';
+    v.bordure = seul || nu ? '1px solid var(--border)' : '0';
+    v.rayon = seul || nu ? 'var(--radius-xl)' : '0';
+    v.theme = seul ? v.theme : undefined;
+    return v;
+  }
+}
+</script>
+</body>
+</html>

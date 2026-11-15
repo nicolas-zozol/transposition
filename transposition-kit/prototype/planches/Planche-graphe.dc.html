@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Graphe en couches : nœud et flèche</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/bldemo/tokens.css">
+<link rel="stylesheet" href="ds/bldemo/components/bundle.css">
+<script src="ds/bldemo/components/bundle.js"></script>
+<script src="transposition-exemple.js"></script>
+<script src="transposition-volumes.js"></script>
+<script src="transposition.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div data-theme="light" style="--tp-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace; display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-8); background: var(--card); color: var(--foreground); font: 400 14px/20px var(--font-sans)">
+
+<header style="display: grid; gap: 6px; max-width: 760px">
+<h2 style="margin: 0; font: 600 20px/28px var(--font-display)">Graphe en couches</h2>
+<p style="margin: 0; color: var(--muted-foreground); text-wrap: pretty">Un nœud par fonctionnalité du manuel, une flèche par dépendance. Les variantes ci-dessous sont le composant lui-même, sans les en-têtes de rang : un clic sélectionne.</p>
+</header>
+
+<section style="display: grid; gap: var(--space-4)">
+<h3 style="margin: 0; padding-bottom: 8px; border-bottom: 1px solid var(--border); font: 600 15px/22px var(--font-display)">Nœud</h3>
+<div style="display: flex; flex-wrap: wrap; gap: var(--space-5) var(--space-4)">
+<sc-for list="{{noeuds}}" as="s" hint-placeholder-count="8">
+<figure style="display: grid; align-content: start; gap: 8px; margin: 0; width: {{s.largeur}}">
+<div style="border: 1px solid var(--border); border-radius: var(--radius-xl); background: var(--card)"><dc-import name="GrapheCouches" magasin="{{s.magasin}}" nu="{{vrai}}" hint-size="240px,180px"></dc-import></div>
+<figcaption style="display: grid; gap: 2px"><span style="font: 600 13px/18px var(--font-sans)">{{s.titre}}</span><span style="color: var(--muted-foreground); font: 400 12px/16px var(--font-sans); text-wrap: pretty">{{s.note}}</span></figcaption>
+</figure>
+</sc-for>
+</div>
+</section>
+
+<section style="display: grid; gap: var(--space-4)">
+<h3 style="margin: 0; padding-bottom: 8px; border-bottom: 1px solid var(--border); font: 600 15px/22px var(--font-display)">Flèche</h3>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-5) var(--space-4)">
+<sc-for list="{{fleches}}" as="s" hint-placeholder-count="4">
+<figure style="display: grid; align-content: start; gap: 8px; margin: 0; width: {{s.largeur}}">
+<div style="border: 1px solid var(--border); border-radius: var(--radius-xl); background: var(--card)"><dc-import name="GrapheCouches" magasin="{{s.magasin}}" nu="{{vrai}}" hint-size="560px,180px"></dc-import></div>
+<figcaption style="display: grid; gap: 2px"><span style="font: 600 13px/18px var(--font-sans)">{{s.titre}}</span><span style="color: var(--muted-foreground); font: 400 12px/16px var(--font-sans); text-wrap: pretty">{{s.note}}</span></figcaption>
+</figure>
+</sc-for>
+</div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1686}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var T = window.Transposition;
+    var jeu = function (fonctionnalites, aretes) {
+      return { versionFormat: 1, produitLe: '2026-11-13', application: 'Planche', fonctions: {}, arbres: {}, fonctionnalites: fonctionnalites, dependances: { socle: [], aretes: aretes || [] } };
+    };
+    var f = function (id, titre, rang, extraction, plus) {
+      plus = plus || {};
+      return { id: id, titre: titre, page: 1, reperage: { correspondance: { statut: 'cli', confiance: 'haute' }, delimitation: 'retenue', ordre: { rang: rang, statut: plus.statut || 'ordonnee', extractible: !!plus.extractible } }, extraction: extraction };
+    };
+    var sous = function (id, mere) { return { id: id, mere: mere, titre: 'Sous-fonctionnalité', page: 1, reperage: { delimitation: 'retenue' }, extraction: 'notExtracted' }; };
+    var arete = function (source, cible, objet, etat) { return { source: source, cible: cible, objet: objet, origine: 'jugement', etat: etat, confiance: 90 }; };
+    var magasin = function (donnees, selection) { return T.creerMagasin({ donnees: donnees, fonctionnalite: selection, sansSelection: !selection }); };
+    var seul = function (titre, note, fonctionnalites, selection) { return { titre: titre, note: note, largeur: '242px', magasin: magasin(jeu(fonctionnalites), selection) }; };
+
+    this.noeuds = [
+      seul('Non extraite', 'État de départ : identifiant, titre sur deux lignes, extraction.', [f('F12.1', 'Prise en charge par la mutuelle', 1, 'notExtracted')]),
+      seul('Extraite', 'StatusDot au ton succès.', [f('F03.1', 'Calcul du forfait journalier', 1, 'extracted')]),
+      seul('Extraite sans ses dépendances', 'Ton avertissement ; le libellé passe sur deux lignes.', [f('F09.1', 'Calcul des GHS', 1, 'extractedSansDependances')]),
+      seul('Extractible', "Non extraite, et tout ce qu'elle atteint est extrait.", [f('F12.1', 'Prise en charge par la mutuelle', 1, 'notExtracted', { extractible: true })]),
+      seul('Partielle', 'Sa frontière garde un objet à juger.', [f('F16.1', 'Facturation des consultations externes', 1, 'notExtracted', { statut: 'partielle' })]),
+      seul('Avec sous-fonctionnalités', 'La pastille donne leur nombre.', [f('F07.1', 'Recalcul des frais de séjour', 1, 'notExtracted'), sous('F07.1.a', 'F07.1'), sous('F07.1.b', 'F07.1')]),
+      seul('Sélectionnée', 'Bordure indigo doublée.', [f('F07.1', 'Recalcul des frais de séjour', 1, 'notExtracted')], 'F07.1'),
+      seul('Titre de 63 caractères', 'Coupé après deux lignes ; le titre complet est en infobulle.', [f('F10.1', 'Suppléments pour réanimation, soins intensifs et soins continus', 1, 'extracted')])
+    ];
+
+    var paire = function (etat) {
+      return jeu([f('F12.1', 'Prise en charge par la mutuelle', 1, 'notExtracted', { extractible: true }), f('F09.1', 'Calcul des GHS', 2, 'extractedSansDependances')], [arete('F09.1', 'F12.1', 'uo_mutuelle', etat)]);
+    };
+    var quatre = jeu([
+      f('F12.1', 'Prise en charge par la mutuelle', 1, 'notExtracted', { extractible: true }), f('F06.1', 'Mouvements du patient entre les services', 1, 'extracted'),
+      f('F09.1', 'Calcul des GHS', 2, 'extractedSansDependances'), f('F10.1', 'Suppléments pour réanimation, soins intensifs et soins continus', 2, 'extracted')
+    ], [arete('F09.1', 'F12.1', 'uo_mutuelle', 'retenue'), arete('F10.1', 'F06.1', 'u_mouvements', 'candidate')]);
+    var saut = jeu([
+      f('F12.1', 'Prise en charge par la mutuelle', 1, 'notExtracted', { extractible: true }),
+      f('F09.1', 'Calcul des GHS', 2, 'extractedSansDependances'),
+      f('F07.1', 'Recalcul des frais de séjour', 3, 'notExtracted')
+    ], [arete('F09.1', 'F12.1', 'uo_mutuelle', 'retenue'), arete('F07.1', 'F09.1', 'u_calcul_ghs', 'candidate'), arete('F07.1', 'F12.1', 'uo_mutuelle', 'candidate')]);
+
+    this.fleches = [
+      { titre: 'Dépendance validée', note: "Trait plein. La flèche va de la fonctionnalité à celle dont elle dépend et porte le nom de l'objet PowerBuilder.", largeur: '590px', magasin: magasin(paire('retenue')) },
+      { titre: 'Dépendance proposée', note: "Trait pointillé, tant que le périmètre de la source n'est pas validé.", largeur: '590px', magasin: magasin(paire('candidate')) },
+      { titre: 'Sélection', note: 'La flèche et son étiquette passent en indigo, la voisine prend un liseré ; le reste se met en retrait.', largeur: '590px', magasin: magasin(quatre, 'F09.1') },
+      { titre: 'Saut de rang', note: 'Une dépendance qui saute un rang contourne les nœuds par un couloir ; son étiquette se lit sur le couloir.', largeur: '938px', magasin: magasin(saut, 'F07.1') }
+    ];
+    this.magasins = this.noeuds.concat(this.fleches).map(function (s) { return s.magasin; });
+  }
+  componentDidMount() {
+    var moi = this;
+    this.offs = this.magasins.map(function (m) { return m.abonner(function () { moi.forceUpdate(); }); });
+  }
+  componentWillUnmount() { (this.offs || []).forEach(function (off) { off(); }); }
+  renderVals() { return { noeuds: this.noeuds, fleches: this.fleches, vrai: true }; }
+}
+</script>
+</body>
+</html>

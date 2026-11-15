@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Bloc Gherkin : variantes</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/bldemo/tokens.css">
+<link rel="stylesheet" href="ds/bldemo/components/bundle.css">
+<script src="ds/bldemo/components/bundle.js"></script>
+<script src="transposition-exemple.js"></script>
+<script src="transposition-volumes.js"></script>
+<script src="transposition.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div data-theme="light" style="--tp-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace; display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-8); background: var(--card); color: var(--foreground); font: 400 14px/20px var(--font-sans)">
+
+<header style="display: grid; gap: 6px; max-width: 760px">
+<h2 style="margin: 0; font: 600 20px/28px var(--font-display)">Bloc Gherkin</h2>
+<p style="margin: 0; color: var(--muted-foreground); text-wrap: pretty">Le scénario en police à chasse fixe : les espaces sont gardés, les tableaux de données restent alignés. Les mots-clés sont en indigo, les barres des tableaux en retrait, la ligne d'en-tête en gras, les paramètres d'un plan en bleu.</p>
+</header>
+
+<sc-for list="{{variantes}}" as="s" hint-placeholder-count="5">
+<section style="display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: var(--space-6); align-items: start">
+<div style="display: grid; gap: 2px; padding-top: 12px"><span style="font: 600 13px/18px var(--font-sans)">{{s.titre}}</span><span style="color: var(--muted-foreground); font: 400 12px/16px var(--font-sans); text-wrap: pretty">{{s.note}}</span></div>
+<div data-theme="{{s.theme}}" style="min-width: 0; padding: {{s.marge}}; border-radius: var(--radius-xl); background: {{s.fond}}"><dc-import name="BlocGherkin" texte="{{s.texte}}" hint-size="100%,160px"></dc-import></div>
+</section>
+</sc-for>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1200,"height":1660}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var T = window.Transposition;
+    var exemples = function (jeu, id) {
+      var out = [];
+      (T.jeu(jeu).fonctionnalites.filter(function (f) { return f.id === id; })[0] || { regles: [] }).regles.forEach(function (r) { out = out.concat(r.exemples); });
+      return out;
+    };
+    var titre = function (liste, t) { return (liste.filter(function (e) { return e.titre === t; })[0] || liste[0] || { gherkin: 'Scénario: exemple\n' }).gherkin; };
+    var forfait = exemples('exemple', 'F03.1'), chambre = exemples('exemple', 'F07.1.a'), ticket = exemples('depart', 'F04.1.a');
+    var clair = { theme: 'light', marge: '0', fond: 'transparent' };
+    var v = function (t, note, texte, plus) { return Object.assign({ titre: t, note: note, texte: texte }, clair, plus || {}); };
+    this.variantes = [
+      v('Scénario simple', 'Quatre lignes : le mot-clé de chaque pas en indigo.', titre(forfait, 'Séjour en maternité')),
+      v('Scénario avec tableaux de données', "Deux tableaux : les colonnes gardent leur alignement, la ligne d'en-tête est en gras.", titre(chambre, 'Deux chambres pendant le séjour')),
+      v('Plan du scénario et ses exemples', 'Les paramètres entre chevrons ressortent en bleu dans les pas.', titre(chambre, 'Sortie avant 14 h')),
+      v('24 lignes, tableau de 12 colonnes', 'Le bloc ne passe jamais à la ligne : il défile en largeur, au clavier aussi.', titre(ticket, 'Séjour sur trois périodes tarifaires')),
+      v('Thème sombre', 'Les mêmes rôles de couleur, sur le fond du thème sombre.', titre(chambre, 'Deux chambres pendant le séjour'), { theme: 'dark', marge: 'var(--space-4)', fond: 'var(--card)' })
+    ];
+  }
+  renderVals() { return { variantes: this.variantes }; }
+}
+</script>
+</body>
+</html>

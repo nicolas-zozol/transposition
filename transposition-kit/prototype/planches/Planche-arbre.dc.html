@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Arbre repliable : ligne d'appel et marques</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/bldemo/tokens.css">
+<link rel="stylesheet" href="ds/bldemo/components/bundle.css">
+<script src="ds/bldemo/components/bundle.js"></script>
+<script src="transposition-exemple.js"></script>
+<script src="transposition-volumes.js"></script>
+<script src="transposition.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div data-theme="light" style="--tp-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace; display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-8); background: var(--card); color: var(--foreground); font: 400 14px/20px var(--font-sans)">
+
+<header style="display: grid; gap: 6px; max-width: 760px">
+<h2 style="margin: 0; font: 600 20px/28px var(--font-display)">Arbre repliable</h2>
+<p style="margin: 0; color: var(--muted-foreground); text-wrap: pretty">Une ligne par appel : le nom de la fonction, ses marques, la taille de son sous-arbre en lignes et en fonctions, avec une barre proportionnelle aux lignes. Chaque variante est une ligne du composant, tirée des données d'exemple ou de l'arbre réel.</p>
+</header>
+
+<section style="display: grid; gap: var(--space-3)">
+<h3 style="margin: 0; padding-bottom: 8px; border-bottom: 1px solid var(--border); font: 600 15px/22px var(--font-display)">L'arbre complet</h3>
+<div style="display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: var(--space-6); align-items: start">
+<div style="display: grid; gap: 2px; padding-top: 10px"><span style="font: 600 13px/18px var(--font-sans)">Arbre de F03.1, déplié</span><span style="color: var(--muted-foreground); font: 400 12px/16px var(--font-sans); text-wrap: pretty">En-tête de colonnes, filets de niveau, chevron des fonctions qui ont des appels.</span></div>
+<div style="border: 1px solid var(--border); border-radius: var(--radius-xl); background: var(--card)"><dc-import name="ArbreAppels" lignes="{{complet}}" hint-size="100%,240px"></dc-import></div>
+</div>
+</section>
+
+<sc-for list="{{groupes}}" as="g" hint-placeholder-count="2">
+<section style="display: grid; gap: var(--space-3)">
+<h3 style="margin: 0; padding-bottom: 8px; border-bottom: 1px solid var(--border); font: 600 15px/22px var(--font-display)">{{g.titre}}</h3>
+<sc-for list="{{g.variantes}}" as="s">
+<div style="display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: var(--space-6); align-items: center">
+<div style="display: grid; gap: 2px"><span style="font: 600 13px/18px var(--font-sans)">{{s.titre}}</span><span style="color: var(--muted-foreground); font: 400 12px/16px var(--font-sans); text-wrap: pretty">{{s.note}}</span></div>
+<div style="padding-top: 8px; border: 1px solid var(--border); border-radius: var(--radius-xl); background: var(--card)"><dc-import name="ArbreAppels" lignes="{{s.lignes}}" sans-entete="{{vrai}}" hint-size="100%,44px"></dc-import></div>
+</div>
+</sc-for>
+</section>
+</sc-for>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1200,"height":1752}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var T = window.Transposition;
+    var rien = function () {};
+    var lignes = function (options) { return T.vues.reperage(T.creerMagasin(options)).lignes; };
+    /* Une ligne figée : ses actions ne font rien, la planche ne change pas d'état. */
+    var figer = function (l, plus) {
+      return Object.assign({}, l, { basculer: rien, selectionner: rien, suivre: l.suivre ? rien : null, selectionnee: false, fond: 'transparent' }, plus || {});
+    };
+    var f03 = lignes({ fonctionnalite: 'F03.1', deplier: 'tout' });
+    var f07 = lignes({ fonctionnalite: 'F07.1', deplier: 'tout' });
+    var f07a = lignes({ fonctionnalite: 'F07.1.a', deplier: 'tout' });
+    var reel = lignes({ jeu: 'depart', fonctionnalite: 'F22.1', deplier: 'tout' });
+    var prendre = function (liste, id, test) {
+      var l = liste.filter(function (x) { return x.id === id && (!test || test(x)); })[0];
+      return l || liste[0];
+    };
+    var marquee = function (texte) { return function (x) { return x.marques.some(function (q) { return q.texte.indexOf(texte) === 0; }); }; };
+    var v =function (titre, note, ligne, plus) { return { titre: titre, note: note, lignes: [figer(ligne, plus)] }; };
+
+    var developpee = prendre(f07, 'w_sejour.uf_lire_dossier');
+    this.complet = f03.map(function (l) { return figer(l); });
+    this.groupes = [
+      {
+        titre: 'Structure',
+        variantes: [
+          v('Signature mère', "La racine de l'arbre garde son préfixe d'objet ; sa taille est celle de l'arbre.", f07[0]),
+          v('Fonction développée, dépliée', 'Chevron vers le bas, taille de son sous-arbre.', developpee),
+          v('Fonction développée, repliée', 'Chevron vers la droite : ses appels se déplient à la demande.', developpee, { ouverte: false, chevron: 'chevron-right', basculeLabel: 'Déplier uf_lire_dossier' }),
+          v('Fonction sans appel', 'Pas de chevron ; une fonction, ses lignes.', prendre(f07a, 'w_sejour.uf_type_chambre')),
+          v('Ligne sélectionnée', 'Fond lavande ; la fiche de la fonction est à côté.', developpee, { selectionnee: true, fond: 'var(--secondary)' }),
+          v('Niveau 9, nom de 65 caractères', "Le nom se coupe ; l'identifiant complet est en infobulle et dans la fiche.", prendre(reel, 'uf_time_convertdatetimeinseconds.uf_time_convertdatetimeinseconds', function (x) { return x.niveau === 10; }))
+        ]
+      },
+      {
+        titre: 'Marques',
+        variantes: [
+          v('Renvoi', 'La fonction est développée ailleurs dans le même arbre ; la flèche y mène.', prendre(reel, 'w_facturation.uf_ligne_prestation', marquee('Renvoi'))),
+          v('Autre arbre', 'La fonction est la signature de la fonctionnalité nommée ; la flèche ouvre son arbre.', prendre(f07, 'w_sejour.uf_calcul_supplements')),
+          v('Arrêt technique', "L'objet ne porte aucune règle de facturation ; hors de la taille.", prendre(f07, 'u_bandeau.uf_affiche')),
+          v('Arrêt vers une fonctionnalité', 'La flèche mène à la fonctionnalité visée.', prendre(f07, 'u_calcul_ghs.uf_calcule')),
+          v('Arrêt vers deux fonctionnalités', "Un même objet d'arrêt peut viser plusieurs lignes du manuel.", prendre(reel, 'w_sejour.ue_forfait_journalier')),
+          v('Arrêt sur un objet hors manuel', "Aucune fonctionnalité visée : rien à suivre.", prendre(reel, 'u_pmsi.uf_resume_sejour')),
+          v('En différé', 'Appel lancé par post : il se lit et se suit comme les autres.', prendre(f07a, 'w_sejour.ue_tri_lignes')),
+          v('En différé, autre arbre', 'Une sous-fonctionnalité que sa mère lance en différé.', prendre(f07, 'w_sejour.ue_repartition_payeurs')),
+          v('En différé, arrêt', "L'appel en différé s'arrête sur l'objet d'une autre fonctionnalité.", prendre(reel, 'w_bordereau.ue_editer')),
+          v('Socle', 'Utilitaire partagé, extrait une fois pour toutes les fonctionnalités.', prendre(f07, 'f_lit_parametre.f_lit_parametre', function (x) { return !marquee('Renvoi')(x); })),
+          v('Renvoi vers le socle', 'Deux marques sur la même ligne.', prendre(f07, 'f_lit_parametre.f_lit_parametre', marquee('Renvoi')))
+        ]
+      }
+    ];
+  }
+  renderVals() { return { complet: this.complet, groupes: this.groupes, vrai: true }; }
+}
+</script>
+</body>
+</html>

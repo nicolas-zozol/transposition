@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Dialogue : importer, JSON invalide</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/bldemo/tokens.css">
+<link rel="stylesheet" href="ds/bldemo/components/bundle.css">
+<script src="ds/bldemo/components/bundle.js"></script>
+<script src="transposition-exemple.js"></script>
+<script src="transposition-volumes.js"></script>
+<script src="transposition.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<dc-import name="Main" onglet="regles" fonctionnalite="F07.1.a" dialogue="importer" import-texte="{{texte}}" import-erreur="{{erreur}}" auteur="DURAND Claire" saisies-locales="{{true}}" hint-size="100%,900px"></dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      texte: [
+        '{',
+        '  "versionFormat": 1,',
+        '  "saisies": {',
+        '    "regles": {',
+        '      "RM-CHAMBREPART-3": { "avis": "validee", "auteur": "DURAND Claire" "date": "2026-11-14" }',
+        '    }',
+        '  }',
+        '}'
+      ].join('\n'),
+      erreur: 'JSON invalide près du caractère 124. Vérifiez que le texte est complet : il commence par { et finit par }.'
+    };
+  }
+}
+</script>
+</body>
+</html>

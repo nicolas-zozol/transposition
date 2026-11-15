@@ -1,0 +1,36 @@
+{
+  "versionFormat": 1,
+  "saisies": {
+    "regles": {
+      "RM-CHAMBREPART-2": {
+        "avis": "validee",
+        "commentaire": "Validée après la mise à jour d'août 2026.",
+        "auteur": "MARTIN Paul",
+        "date": "2026-11-16"
+      },
+      "RM-CHAMBREPART-3": {
+        "avis": "aRevoir",
+        "commentaire": "Aucun dossier de recette : à vérifier avec la facturation.",
+        "auteur": "MARTIN Paul",
+        "date": "2026-11-16"
+      },
+      "RM-GHS-1": {
+        "avis": "validee",
+        "auteur": "MARTIN Paul",
+        "date": "2026-11-16"
+      },
+      "RM-ANCIENNE-7": {
+        "avis": "validee",
+        "auteur": "MARTIN Paul",
+        "date": "2026-10-02"
+      }
+    },
+    "questions": {
+      "Q-CHAMBREPART-2": {
+        "reponse": "Non : sans date de sortie, aucun supplément.",
+        "auteur": "MARTIN Paul",
+        "date": "2026-11-16"
+      }
+    }
+  }
+}

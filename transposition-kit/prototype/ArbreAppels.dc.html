@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Arbre d'appels</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/bldemo/tokens.css">
+<link rel="stylesheet" href="ds/bldemo/components/bundle.css">
+<script src="ds/bldemo/components/bundle.js"></script>
+<script src="transposition-exemple.js"></script>
+<script src="transposition-volumes.js"></script>
+<script src="transposition.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div data-theme="{{theme}}" style="padding: {{marge}}; --mono: var(--tp-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace)">
+<div role="tree" aria-label="Arbre d'appels" style="display: flex; flex-direction: column; min-width: 0; padding-bottom: 8px; border: {{bordure}}; border-radius: var(--radius-xl); background: {{fond}}; color: var(--foreground); font-family: var(--font-sans)">
+<sc-if value="{{avecEntete}}" hint-placeholder-val="{{true}}">
+<div aria-hidden="true" style="display: flex; align-items: center; gap: 8px; height: 40px; margin-bottom: 4px; padding: 0 16px 0 12px; border-bottom: 1px solid var(--border); color: var(--muted-foreground); font: 500 13px/18px var(--font-sans)">
+<span style="flex: 1 1 0; padding-left: 38px">Fonction</span>
+<span style="flex: none; width: 52px; text-align: right">Lignes</span>
+<span style="flex: none; width: 44px"></span>
+<span style="flex: none; width: 58px; text-align: right">Fonctions</span>
+</div>
+</sc-if>
+<sc-for list="{{lignes}}" as="l" hint-placeholder-count="8">
+<div role="treeitem" aria-level="{{l.niveau}}" aria-selected="{{l.selectionnee}}" style="display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 16px 0 12px; background: {{l.fond}}" style-hover="background: color-mix(in oklab, var(--muted) 70%, transparent)">
+<span aria-hidden="true" style="flex: none; align-self: stretch; display: flex"><sc-for list="{{l.guides}}" as="g"><span style="flex: none; width: {{l.pasGuide}}; margin-left: 11px; border-left: 1px solid var(--border)"></span></sc-for></span>
+<sc-if value="{{l.aEnfants}}">
+<button type="button" aria-label="{{l.basculeLabel}}" aria-expanded="{{l.ouverte}}" onClick="{{l.basculer}}" style="all: unset; box-sizing: border-box; flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: var(--radius-full); color: var(--muted-foreground); cursor: pointer" style-hover="background: var(--accent); color: var(--accent-foreground)" style-focus-visible="box-shadow: var(--focus-ring)"><x-import component-from-global-scope="BLDemo.Icon" name="{{l.chevron}}" size="{{16}}"></x-import></button>
+</sc-if>
+<sc-if value="{{l.sansEnfants}}">
+<span aria-hidden="true" style="flex: none; width: 24px"></span>
+</sc-if>
+<button type="button" onClick="{{l.selectionner}}" title="{{l.id}}" style="all: unset; box-sizing: border-box; flex: 1 1 0; min-width: 72px; height: 28px; padding: 0 6px; border-radius: var(--radius-sm); display: flex; align-items: center; overflow: hidden; color: var(--muted-foreground); font: 400 13px/18px var(--mono); white-space: nowrap; cursor: pointer" style-focus-visible="box-shadow: var(--focus-ring)"><span style="flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis">{{l.prefixe}}</span><span style="flex: 0 0 auto; max-width: 100%; overflow: hidden; text-overflow: ellipsis; color: var(--foreground); font-weight: 600">{{l.nom}}</span></button>
+<sc-for list="{{l.marques}}" as="q"><x-import component-from-global-scope="BLDemo.Badge" tone="{{q.ton}}" icon="{{q.icone}}" variant="{{q.variante}}">{{q.texte}}</x-import></sc-for>
+<sc-if value="{{l.precision}}">
+<span style="flex: none; color: var(--muted-foreground); font: 400 12px/16px var(--font-sans); white-space: nowrap">{{l.precision}}</span>
+</sc-if>
+<sc-if value="{{l.suivre}}">
+<x-import component-from-global-scope="BLDemo.Button" variant="ghost" size="sm" icon="arrow-right" aria-label="{{l.suivreLabel}}" title="{{l.suivreLabel}}" on-click="{{l.suivre}}"></x-import>
+</sc-if>
+<sc-if value="{{l.sansSuivre}}">
+<span aria-hidden="true" style="flex: none; width: 32px"></span>
+</sc-if>
+<span style="flex: none; width: 52px; text-align: right; color: {{l.encre}}; font: 400 13px/18px var(--font-sans); font-variant-numeric: tabular-nums">{{l.lignes}}</span>
+<span role="img" aria-label="{{l.partLabel}}" style="flex: none; width: 44px; height: 6px; overflow: hidden; border-radius: var(--radius-full); background: var(--muted); visibility: {{l.barreVis}}"><span style="display: block; width: {{l.part}}; height: 100%; border-radius: inherit; background: var(--primary)"></span></span>
+<span style="flex: none; width: 58px; text-align: right; color: var(--muted-foreground); font: 400 13px/18px var(--font-sans); font-variant-numeric: tabular-nums">{{l.fonctions}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"lignes":{"editor":null},"sansEntete":{"editor":null},"fonctionnalite":{"editor":"text","default":"F07.1"},"fonction":{"editor":null,"default":"w_sejour.uf_lire_dossier"},"jeu":{"editor":"enum","options":["exemple","depart","intermediaire"],"default":"exemple"},"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"$preview":{"width":820,"height":480}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.lien = window.Transposition.attacher(this, 'reperage');
+  }
+  componentDidMount() { if (!this.props.lignes) this.lien.monter(); }
+  componentWillUnmount() { this.lien.demonter(); }
+  renderVals() {
+    var p = this.props;
+    if (p.lignes) {
+      return { lignes: p.lignes, avecEntete: !p.sansEntete, marge: '0', theme: undefined, bordure: '0', fond: 'transparent' };
+    }
+    var v = this.lien.vue();
+    return { lignes: v.lignes, avecEntete: true, marge: 'var(--space-6)', theme: v.theme, bordure: '1px solid var(--border)', fond: 'var(--card)' };
+  }
+}
+</script>
+</body>
+</html>

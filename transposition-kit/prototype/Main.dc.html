@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Transposition</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/bldemo/tokens.css">
+<link rel="stylesheet" href="ds/bldemo/components/bundle.css">
+<script src="ds/bldemo/components/bundle.js"></script>
+<script src="transposition-exemple.js"></script>
+<script src="transposition-volumes.js"></script>
+<script src="transposition.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div data-theme="{{theme}}" class="bl-shell" style="height: 100vh; --tp-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace; color: var(--foreground); font-family: var(--font-sans)">
+
+<x-import component-from-global-scope="BLDemo.Sidebar" title="Transposition" items="{{nav}}" value="{{onglet}}" on-value-change="{{allerOnglet}}" dc-props="{{propsSidebar}}"></x-import>
+
+<div class="bl-shell-main">
+<x-import component-from-global-scope="BLDemo.Topbar" title="{{titre}}" meta="{{contexte}}">
+<x-import component-from-global-scope="BLDemo.Button" variant="outline" icon="upload" on-click="{{ouvrirImporter}}">Importer</x-import>
+<x-import component-from-global-scope="BLDemo.Button" icon="download" title="{{infoExporter}}" on-click="{{ouvrirExporter}}">{{libelleExporter}}</x-import>
+<x-import component-from-global-scope="BLDemo.Button" variant="ghost" icon="{{iconeTheme}}" aria-label="{{libelleTheme}}" title="{{libelleTheme}}" on-click="{{basculerTheme}}"></x-import>
+<sc-if value="{{auteurConnu}}">
+<button type="button" onClick="{{ouvrirNom}}" aria-label="{{libelleAuteur}}" title="{{libelleAuteur}}" style="all: unset; display: inline-flex; border-radius: var(--radius-full); cursor: pointer" style-focus-visible="box-shadow: var(--focus-ring)"><x-import component-from-global-scope="BLDemo.Avatar" name="{{auteur}}"></x-import></button>
+</sc-if>
+<sc-if value="{{auteurInconnu}}" hint-placeholder-val="{{true}}">
+<x-import component-from-global-scope="BLDemo.Button" variant="ghost" icon="user" aria-label="Indiquer votre nom" title="Indiquer votre nom" on-click="{{ouvrirNom}}"></x-import>
+</sc-if>
+</x-import>
+
+<main class="bl-shell-content">
+<sc-if value="{{estReperage}}" hint-placeholder-val="{{true}}">
+<dc-import name="Reperage" magasin="{{magasin}}" hint-size="100%,760px"></dc-import>
+</sc-if>
+<sc-if value="{{estCarte}}">
+<dc-import name="Carte" magasin="{{magasin}}" hint-size="100%,760px"></dc-import>
+</sc-if>
+<sc-if value="{{estRegles}}">
+<dc-import name="Regles" magasin="{{magasin}}" hint-size="100%,760px"></dc-import>
+</sc-if>
+<sc-if value="{{estDependances}}">
+<dc-import name="Dependances" magasin="{{magasin}}" hint-size="100%,760px"></dc-import>
+</sc-if>
+</main>
+</div>
+
+<x-import component-from-global-scope="BLDemo.Dialog" open="{{importer.ouvert}}" on-open-change="{{fermerDialogue}}" title="Importer un fichier" description="Un fichier de données remplace les données affichées. Un fichier de saisies fusionne ses avis et ses réponses avec les vôtres." width="{{640}}">
+<sc-if value="{{importer.avant}}">
+<label onDragOver="{{importer.surSurvol}}" onDrop="{{importer.surDepot}}" style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 20px 16px; border: 1px dashed var(--input); border-radius: var(--radius-lg); background: var(--background); color: var(--foreground); text-align: center; cursor: pointer" style-hover="background: var(--accent)">
+<span style="display: inline-flex; padding-bottom: 4px; color: var(--primary)"><x-import component-from-global-scope="BLDemo.Icon" name="upload" size="{{20}}"></x-import></span>
+<span style="font: 600 14px/20px var(--font-sans)">Déposez un fichier JSON ici</span>
+<span style="color: var(--muted-foreground); font: 400 13px/18px var(--font-sans)">{{importer.aideDepot}}</span>
+<input type="file" accept=".json,application/json" class="bl-sr" onChange="{{importer.surFichier}}">
+</label>
+<div style="display: grid; gap: 6px">
+<label for="tp-import-json" class="bl-label">Ou collez le JSON</label>
+<textarea id="tp-import-json" class="bl-input" rows="8" spellCheck="{{false}}" value="{{importer.texte}}" onChange="{{importer.surSaisie}}" aria-invalid="{{importer.invalide}}" aria-describedby="tp-import-note" placeholder="{ &quot;versionFormat&quot;: 1, … }" style="height: auto; min-height: 168px; padding: 8px 12px; resize: vertical; font: 400 12px/18px var(--tp-mono)"></textarea>
+<sc-if value="{{importer.aErreur}}">
+<p id="tp-import-note" role="alert" class="bl-field-note bl-field-error"><x-import component-from-global-scope="BLDemo.Icon" name="circle-alert" size="{{14}}"></x-import><span>{{importer.erreur}}</span></p>
+</sc-if>
+</div>
+<div class="bl-dialog-footer">
+<x-import component-from-global-scope="BLDemo.Button" variant="outline" on-click="{{fermerDialogue}}">Annuler</x-import>
+<x-import component-from-global-scope="BLDemo.Button" icon="upload" disabled="{{importer.inactif}}" on-click="{{importer.lancer}}">Importer</x-import>
+</div>
+</sc-if>
+<sc-if value="{{importer.apres}}">
+<div role="status" style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: var(--radius-md); background: var(--success-soft); color: var(--success); font: 500 14px/20px var(--font-sans)">
+<x-import component-from-global-scope="BLDemo.Icon" name="circle-check" size="{{16}}"></x-import>
+<span style="color: var(--foreground)">{{importer.message}}</span>
+</div>
+<div class="bl-dialog-footer">
+<x-import component-from-global-scope="BLDemo.Button" variant="outline" on-click="{{importer.recommencer}}">Importer un autre fichier</x-import>
+<x-import component-from-global-scope="BLDemo.Button" on-click="{{fermerDialogue}}">Fermer</x-import>
+</div>
+</sc-if>
+</x-import>
+
+<x-import component-from-global-scope="BLDemo.Dialog" open="{{exporter.ouvert}}" on-open-change="{{fermerDialogue}}" title="Exporter les saisies" description="Les saisies ne vivent que dans ce navigateur. Copiez ce JSON ou téléchargez-le pour le transmettre à l'équipe de transposition." width="{{640}}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px var(--space-8)">
+<x-import component-from-global-scope="BLDemo.Stat" value="{{exporter.nbAvis}}" label="{{exporter.libAvis}}"></x-import>
+<x-import component-from-global-scope="BLDemo.Stat" value="{{exporter.nbReponses}}" label="{{exporter.libReponses}}"></x-import>
+<span style="flex: 1 1 0"></span>
+<x-import component-from-global-scope="BLDemo.Badge" tone="{{exporter.etat.ton}}" icon="{{exporter.etat.icone}}">{{exporter.etat.texte}}</x-import>
+</div>
+<sc-if value="{{exporter.aOrphelines}}">
+<div style="display: grid; gap: 6px; padding: 10px 12px; border-radius: var(--radius-md); background: var(--muted)">
+<span style="font: 500 13px/18px var(--font-sans)">{{exporter.titreOrphelines}}</span>
+<sc-for list="{{exporter.orphelines}}" as="o"><span style="display: flex; flex-wrap: wrap; gap: 4px 8px; font: 400 13px/18px var(--font-sans)"><span style="color: var(--muted-foreground)">{{o.genre}}</span><span style="font: 400 12px/18px var(--tp-mono)">{{o.id}}</span><span>{{o.detail}}</span></span></sc-for>
+</div>
+</sc-if>
+<div style="display: grid; gap: 6px">
+<label for="tp-export-json" class="bl-label">Fichier de saisies</label>
+<textarea id="tp-export-json" class="bl-input" rows="10" readOnly="{{true}}" spellCheck="{{false}}" value="{{exporter.json}}" style="height: auto; min-height: 220px; padding: 8px 12px; resize: vertical; background: var(--background); font: 400 12px/18px var(--tp-mono)"></textarea>
+</div>
+<div class="bl-dialog-footer">
+<x-import component-from-global-scope="BLDemo.Button" variant="secondary" icon="download" on-click="{{exporter.telecharger}}">Télécharger</x-import>
+<x-import component-from-global-scope="BLDemo.Button" icon="{{exporter.iconeCopier}}" on-click="{{exporter.copier}}">{{exporter.libCopier}}</x-import>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="BLDemo.Dialog" open="{{nom.ouvert}}" on-open-change="{{nom.fermer}}" title="Qui saisit ?" description="{{nom.description}}" width="{{440}}">
+<x-import component-from-global-scope="BLDemo.Field" label="Nom et prénom" hint="NOM en capitales, puis prénom." html-for="tp-nom">
+<x-import component-from-global-scope="BLDemo.Input" id="tp-nom" value="{{nom.valeur}}" on-change="{{nom.surSaisie}}" on-key-down="{{nom.surTouche}}" placeholder="DURAND Claire" aria-describedby="tp-nom-note"></x-import>
+</x-import>
+<div class="bl-dialog-footer">
+<x-import component-from-global-scope="BLDemo.Button" variant="outline" on-click="{{nom.fermer}}">Annuler</x-import>
+<x-import component-from-global-scope="BLDemo.Button" disabled="{{nom.inactif}}" on-click="{{nom.valider}}">Enregistrer</x-import>
+</div>
+</x-import>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"onglet":{"editor":"enum","options":["reperage","carte","regles","dependances"],"default":"reperage","section":"État"},"fonctionnalite":{"editor":"text","default":"F07.1","section":"État"},"mode":{"editor":"enum","options":["francais","gherkin"],"default":"francais","section":"État"},"dialogue":{"editor":"enum","options":["aucun","importer","exporter","nom"],"default":"aucun","section":"État"},"jeu":{"editor":"enum","options":["exemple","depart","intermediaire"],"default":"exemple","section":"Données"},"theme":{"editor":"enum","options":["light","dark"],"default":"light","section":"Thème"},"fonction":{"editor":null},"occurrence":{"editor":null},"recherche":{"editor":null},"filtre":{"editor":null},"auteur":{"editor":null},"saisiesLocales":{"editor":null},"importTexte":{"editor":null},"importErreur":{"editor":null},"deplier":{"editor":null},"renvois":{"editor":null},"zoom":{"editor":null},"niveaux":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+/* Si transposition.js n'a pas été exécuté dans le cadre, dit ce que le cadre a reçu. Sans cela l'erreur se réduit à
+   « window.Transposition is undefined », qui ne distingue pas un fichier absent d'un fichier présent mais non lancé. */
+function etatDuChargement() {
+  var nom = 'transposition.js', etat = [];
+  var oui = function (x) { return x ? 'oui' : 'non'; };
+  var possede = function (o) { return !!o && Object.prototype.hasOwnProperty.call(o, nom); };
+  try {
+    var balise = Array.prototype.some.call(document.scripts, function (s) {
+      return (s.getAttribute('src') || '').split(/[?#]/)[0].split('/').pop() === nom;
+    });
+    etat = [
+      'exemple : ' + oui(window.TranspositionExemple),
+      'volumes : ' + oui(window.TranspositionVolumes),
+      'BL Demo : ' + oui(window.BLDemo),
+      'texte reçu : ' + oui(possede(window.__dcFiles) || possede(window.__dcPartUrls)),
+      'balise d\'origine : ' + oui(balise),
+      'base : ' + (/\/_f\//.test(document.baseURI) ? 'adresse publiée' : 'copie')
+    ];
+  } catch (e) {}
+  return nom + ' n\'a pas été exécuté dans cet artboard (' + etat.join(', ') + '). Rechargez la page.';
+}
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    if (!window.Transposition) throw new Error(etatDuChargement());
+    this.lien = window.Transposition.attacher(this, 'coquille');
+  }
+  componentDidMount() { this.lien.monter(); }
+  componentWillUnmount() { this.lien.demonter(); }
+  renderVals() {
+    return this.lien.vue();
+  }
+}
+</script>
+</body>
+</html>
