@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from 'react'
 import { Button } from '@/composants/ui/button'
 import { Card, CardContent } from '@/composants/ui/card'
 import { Input } from '@/composants/ui/input'
@@ -7,10 +8,30 @@ import { Code, EtatVide, Marque, Marques, Stat } from '@/composants/Marques'
 import { SelecteurArbre } from '@/composants/SelecteurArbre'
 import { useMagasin } from '@/magasin/contexte'
 import { vueReperage, type FicheFonction } from '@/vues/reperage'
+import { cn } from 'cn'
+
+/** La liste des résultats (600 px) part du bord gauche du champ, comme dans le prototype ; quand la fenêtre n'a pas
+ *  la place à droite (1 280 px, le champ passé à droite de la carte), elle se cale sur le bord droit du champ. */
+function useAncrageResultats(ouverte: boolean) {
+  const champ = useRef<HTMLDivElement>(null)
+  const [aDroite, setADroite] = useState(false)
+  useLayoutEffect(() => {
+    if (!ouverte) return
+    const mesurer = () => {
+      const r = champ.current?.getBoundingClientRect()
+      if (r) setADroite(r.left + Math.min(600, innerWidth * 0.86) > document.documentElement.clientWidth - 16)
+    }
+    mesurer()
+    addEventListener('resize', mesurer)
+    return () => removeEventListener('resize', mesurer)
+  }, [ouverte])
+  return { champ, aDroite }
+}
 
 export function Reperage() {
   const m = useMagasin()
   const v = vueReperage(m)
+  const { champ: champRecherche, aDroite: resultatsADroite } = useAncrageResultats(v.resultatsOuverts)
   return (
     <div className="flex flex-col gap-4">
       <h2 className="m-0 font-display text-lg/[26px] font-semibold text-balance text-foreground">{v.question}</h2>
@@ -21,7 +42,7 @@ export function Reperage() {
             <div className="max-w-[520px] min-w-0 flex-[1_1_360px]">
               <SelecteurArbre options={v.optionsArbres} valeur={v.fonctionnaliteId} surChoix={v.surChoixArbre} />
             </div>
-            <div className="relative max-w-[420px] min-w-0 flex-[1_1_340px]">
+            <div ref={champRecherche} className="relative max-w-[420px] min-w-0 flex-[1_1_340px]">
               <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground">
                 <Icone nom="search" />
               </span>
@@ -39,7 +60,7 @@ export function Reperage() {
               {v.resultatsOuverts && (
                 <>
                   <button type="button" aria-label="Fermer les résultats" onClick={v.fermerRecherche} className="fixed inset-0 z-40 cursor-default" />
-                  <div role="group" aria-label="Résultats de la recherche" className="absolute top-[calc(100%+6px)] left-0 z-50 max-h-[440px] w-[600px] max-w-[86vw] overflow-auto rounded-lg border bg-popover pb-2 text-popover-foreground shadow-md">
+                  <div role="group" aria-label="Résultats de la recherche" className={cn('absolute top-[calc(100%+6px)] z-50 max-h-[440px] w-[600px] max-w-[86vw] overflow-auto rounded-lg border bg-popover pb-2 text-popover-foreground shadow-md', resultatsADroite ? 'right-0' : 'left-0')}>
                     <div className="flex items-center gap-3 border-b py-2 pr-2 pl-4">
                       <span className="flex-1 text-[13px]/[18px] font-medium text-muted-foreground">{v.resumeResultats}</span>
                       <Button variant="ghost" size="icon-sm" aria-label="Fermer les résultats" onClick={v.fermerRecherche}>

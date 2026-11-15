@@ -50,7 +50,7 @@ function NoeudAppel({ data }: NodeProps<NoeudRF>) {
       role="group"
       aria-label={n.libelle}
       onFocus={() => data.reveler(n.cle)}
-      className="relative box-border flex size-full items-center gap-0.5 rounded-lg pr-1.5"
+      className="pointer-events-auto relative box-border flex size-full items-center gap-0.5 rounded-lg pr-1.5"
       style={{ background: n.fond, border: '1px ' + n.trait + ' ' + n.bord, boxShadow: n.selectionnee ? '0 0 0 1px var(--primary)' : undefined }}
     >
       <Handle type="target" position={Position.Left} isConnectable={false} className="pointer-events-none! opacity-0!" />

@@ -51,15 +51,34 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
+  onOpenAutoFocus,
+  onCloseAutoFocus,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean
 }) {
+  /* Les dialogues de l'application s'ouvrent par le magasin, sans DialogTrigger : Radix ne sait pas où rendre le focus
+     à la fermeture. On le rend à l'élément qui l'avait à l'ouverture, s'il est toujours dans la page. */
+  const avant = React.useRef<HTMLElement | null>(null)
+  const retenirLeFocus = (ev: Event) => {
+    avant.current = document.activeElement as HTMLElement | null
+    onOpenAutoFocus?.(ev)
+  }
+  const rendreLeFocus = (ev: Event) => {
+    onCloseAutoFocus?.(ev)
+    const el = avant.current
+    avant.current = null
+    if (ev.defaultPrevented || !el || el === document.body || !el.isConnected) return
+    ev.preventDefault()
+    el.focus({ preventScroll: true })
+  }
   return (
     <DialogPortal data-slot="dialog-portal">
       <DialogOverlay />
       <DialogPrimitive.Content
         data-slot="dialog-content"
+        onOpenAutoFocus={retenirLeFocus}
+        onCloseAutoFocus={rendreLeFocus}
         className={cn(
           "fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 max-h-[calc(100vh-2rem)] overflow-y-auto rounded-lg border bg-popover p-6 text-popover-foreground shadow-md duration-200 outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-lg",
           className
