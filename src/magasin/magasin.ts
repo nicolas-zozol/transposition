@@ -74,6 +74,8 @@ export interface Magasin {
   choisirAvis(id: string, avis: ValeurAvis): void
   commenter(id: string, texte: string): void
   ouvrirCommentaire(id: string): void
+  /** Rend le champ à focaliser, et l'oublie. */
+  prendreFocus(): string | null
   repondre(id: string, texte: string): void
   // Dialogues
   ouvrirDialogue(nom: Dialogue): void
@@ -361,6 +363,11 @@ export function creerMagasin(donnees: FichierDeDonnees | null, options?: Options
     e.sections['com:' + id] = true
     e.focus = 'tp-com-' + id
     m.notifier()
+  }
+  m.prendreFocus = () => {
+    const id = e.focus
+    e.focus = null
+    return id
   }
   m.repondre = (id, texte) => {
     if (!e.auteur) return demanderNom({ genre: 'reponse', id, valeur: texte })
