@@ -1,0 +1,247 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@xyflow/react/dist/base.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Polices du design system BL Demo, embarquées dans la page. */
+@font-face { font-family: "Poppins"; src: url("./assets/polices/Poppins-latin-500.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Poppins"; src: url("./assets/polices/Poppins-latin-600.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Poppins"; src: url("./assets/polices/Poppins-latin-700.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("./assets/polices/Inter-latin-variable.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+
+/* Thème shadcn/ui : correspondance des variables, celle de shadcn. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+/* BL Demo — thème shadcn/ui pour Tailwind v4, repris de design-system/shadcn.md. */
+
+:root {
+  --radius: 0.625rem;
+
+  /* Variables shadcn/ui */
+  --background: #f7f5ff;
+  --foreground: #16142b;
+  --card: #ffffff;
+  --card-foreground: var(--foreground);
+  --popover: #ffffff;
+  --popover-foreground: var(--foreground);
+  --primary: #382e95;
+  --primary-foreground: #ffffff;
+  --secondary: #ebeafc;
+  --secondary-foreground: #382e95;
+  --muted: #efedf8;
+  --muted-foreground: #625f7d;
+  --accent: #ebeafc;
+  --accent-foreground: #16142b;
+  --destructive: #be123c;
+  --border: #e4e1f2;
+  --input: #8683a6;
+  --ring: #5f58ba;
+  --chart-1: #feb265;
+  --chart-2: #ffd878;
+  --chart-3: #5fb5ee;
+  --chart-4: #70cdcd;
+  --chart-5: #5f58ba;
+  --sidebar: #382e95;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ffffff;
+  --sidebar-primary-foreground: #382e95;
+  --sidebar-accent: #5452bc;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #5048a2;
+  --sidebar-ring: #ffffff;
+
+  /* Ajouts BL Demo */
+  --destructive-foreground: #ffffff;
+  --destructive-soft: #fff1f2;
+  --success: #15803d;
+  --success-soft: #f0fdf4;
+  --warning: #b45309;
+  --warning-soft: #fffbeb;
+  --info: #2563eb;
+  --info-soft: #eff6ff;
+  --overlay: #16142b80;
+  --memo-lime: #e7f3b8;
+  --memo-yellow: #fff4c6;
+  --memo-orange: #ffdcaa;
+  --memo-sky: #d2eef9;
+  --bl-shadow-xs: 0 1px 2px #382e9512;
+  --bl-shadow-sm: 0 1px 3px #382e9514, 0 6px 16px -4px #382e951f;
+  --bl-shadow-md: 0 4px 8px -2px #16142b1f, 0 16px 32px -4px #16142b2e;
+  --bl-focus-ring: 0 0 0 2px #ffffff, 0 0 0 4px #5f58ba;
+  --bl-focus-ring-sidebar: 0 0 0 2px #382e95, 0 0 0 4px #ffffff;
+}
+
+.dark {
+  --background: #110f24;
+  --foreground: #f3f1ff;
+  --card: #1a1833;
+  --card-foreground: var(--foreground);
+  --popover: #201e3d;
+  --popover-foreground: var(--foreground);
+  --primary: #a8a3f2;
+  --primary-foreground: #16142b;
+  --secondary: #2b2856;
+  --secondary-foreground: #dedbff;
+  --muted: #232140;
+  --muted-foreground: #a7a4c2;
+  --accent: #2b2856;
+  --accent-foreground: #f3f1ff;
+  --destructive: #fb7185;
+  --border: #302d52;
+  --input: #7673a0;
+  --ring: #a8a3f2;
+  --chart-1: #feb265;
+  --chart-2: #ffd878;
+  --chart-3: #5fb5ee;
+  --chart-4: #70cdcd;
+  --chart-5: #8f89e0;
+  --sidebar: #2d2580;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ffffff;
+  --sidebar-primary-foreground: #382e95;
+  --sidebar-accent: #4540a3;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #3f3893;
+  --sidebar-ring: #ffffff;
+
+  --destructive-foreground: #16142b;
+  --destructive-soft: #45101f;
+  --success: #4ade80;
+  --success-soft: #0d2b1a;
+  --warning: #fbbf24;
+  --warning-soft: #3a2706;
+  --info: #60a5fa;
+  --info-soft: #13264d;
+  --overlay: #00000099;
+  --memo-lime: #323d18;
+  --memo-yellow: #453a12;
+  --memo-orange: #4a3115;
+  --memo-sky: #173b4a;
+  --bl-shadow-xs: 0 1px 2px #00000066;
+  --bl-shadow-sm: 0 1px 3px #00000080, 0 6px 16px -4px #00000099;
+  --bl-shadow-md: 0 4px 8px -2px #000000a6, 0 16px 32px -4px #000000cc;
+  --bl-focus-ring: 0 0 0 2px #110f24, 0 0 0 4px #a8a3f2;
+  --bl-focus-ring-sidebar: 0 0 0 2px #2d2580, 0 0 0 4px #ffffff;
+}
+
+@theme inline {
+  /* Couleurs ajoutées (les --color-* de shadcn sont plus haut) */
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-soft: var(--destructive-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-overlay: var(--overlay);
+  --color-memo-lime: var(--memo-lime);
+  --color-memo-yellow: var(--memo-yellow);
+  --color-memo-orange: var(--memo-orange);
+  --color-memo-sky: var(--memo-sky);
+
+  /* Polices : Inter pour le texte, Poppins pour les titres et la navigation (classe font-display) */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Coin haut-droit de la barre latérale (rounded-tr-4xl) */
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Ombres teintées, différentes en clair et en sombre */
+  --shadow-xs: var(--bl-shadow-xs);
+  --shadow-sm: var(--bl-shadow-sm);
+  --shadow-md: var(--bl-shadow-md);
+}
+
+/* L'anneau de focus BL Demo : 2 px de fond, puis 2 px pleins de ring (design-system/shadcn.md). */
+@utility focus-anneau {
+  &:focus-visible {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow: var(--bl-focus-ring);
+  }
+}
+@utility focus-anneau-dedans {
+  &:focus-visible {
+    outline: 2px solid transparent;
+    box-shadow: inset 0 0 0 2px var(--ring);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-background text-foreground font-sans text-sm;
+    margin: 0;
+  }
+}
+
+/* React Flow : la carte prend les couleurs du thème BL Demo. */
+.react-flow {
+  --xy-background-color: var(--background);
+  --xy-attribution-background-color: color-mix(in oklab, var(--card) 80%, transparent);
+  --xy-minimap-background-color: var(--card);
+  --xy-minimap-mask-background-color: color-mix(in oklab, var(--background) 55%, transparent);
+  --xy-minimap-mask-stroke-color: var(--primary);
+  --xy-minimap-mask-stroke-width: 1.5;
+}
+.react-flow__attribution a {
+  color: var(--muted-foreground);
+}
+.react-flow__node {
+  cursor: default;
+}
+.react-flow__minimap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
